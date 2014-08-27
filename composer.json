@@ -1,0 +1,27 @@
+{
+    "name":              "vi-kon/laravel-parser",
+    "description":       "Parser and Lexer for Laravel 4",
+    "keywords":          [
+        "laravel",
+        "parser",
+        "lexer"
+    ],
+    "license":           "MIT",
+    "homepage":          "https://github.com/vi-kon/laravel-parser",
+    "authors":           [
+        {
+            "name":  "Kovács Vince",
+            "email": "vincekovacs@hotmail.com"
+        }
+    ],
+    "require":           {
+        "php":                ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload":          {
+        "psr-0": {
+            "ViKon\\Parser": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
