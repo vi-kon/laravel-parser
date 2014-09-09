@@ -58,6 +58,11 @@ class SyntaxTree
         return $node;
     }
 
+    public function removeNodeAt($index)
+    {
+        array_splice($this->nodes, $index, 1);
+    }
+
     /**
      * Get name
      *
