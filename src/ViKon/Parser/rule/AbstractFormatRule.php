@@ -3,25 +3,22 @@
 
 namespace ViKon\Parser\rule;
 
+use ViKon\Parser\AbstractSet;
+use ViKon\Parser\lexer\Lexer;
+
 abstract class AbstractFormatRule extends AbstractBlockRule
 {
     /**
-     * @param string          $name         rule name
-     * @param int             $order        order number
-     * @param string|string[] $entryPattern entry pattern(s)
-     * @param string|string[] $exitPattern  exit pattern(s)
+     * Prepare rule before connecting
+     *
+     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
+     *
+     * @return $this
      */
-    public function __construct($name, $order, $entryPattern, $exitPattern)
+    public function prepare(Lexer $lexer)
     {
-        parent::__construct($name, $order, $entryPattern, $exitPattern);
-        $this->setCategory(self::CATEGORY_FORMAT);
-    }
+        $this->acceptedRuleNames = $this->set->getRuleNamesByCategory(AbstractSet::CATEGORY_FORMAT);
 
-    public function prepare()
-    {
-        $this->acceptedChildRules = isset(self::$categories[self::CATEGORY_FORMAT])
-            ? self::$categories[self::CATEGORY_FORMAT]
-            : array();
-        array_splice($this->acceptedChildRules, array_search($this->name, $this->acceptedChildRules), 1);
+        return $this;
     }
 }
