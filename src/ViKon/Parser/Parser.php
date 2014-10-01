@@ -81,8 +81,8 @@ class Parser
      * @param string $text      raw data
      * @param bool   $recursive called recursive
      *
-     * @throws ParserException
-     * @return \ViKon\Parser\TokenList|bool FALSE on failure otherwise TokenList
+     * @throws \ViKon\Parser\ParserException
+     * @return \ViKon\Parser\TokenList
      */
     public function parse($text, $recursive = false)
     {
@@ -123,7 +123,7 @@ class Parser
      *
      * @throws \ViKon\Parser\ParserException
      *
-     * @return string|bool FALSE on failure, otherwise rendered content
+     * @return string
      */
     public function render($text, $skin)
     {
@@ -132,10 +132,7 @@ class Parser
             throw new ParserException('Renderer not set');
         }
 
-        if (($tokenList = $this->parse($text)) === false)
-        {
-            return false;
-        }
+        $tokenList = $this->parse($text);
 
         return $this->renderer->render($tokenList, $skin);
     }
@@ -159,7 +156,7 @@ class Parser
             throw new ParserException('Rule with name "' . $ruleName . '" not found');
         }
 
-        return $this->rules[$ruleName]->parseToken($content, $position, $state, $tokenList);
+        $this->rules[$ruleName]->parseToken($content, $position, $state, $tokenList);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace ViKon\Parser\lexer;
 
+use ViKon\Parser\LexerException;
 use ViKon\Parser\Parser;
 use ViKon\Parser\TokenList;
 
@@ -114,12 +115,12 @@ class Lexer
         return $this;
     }
 
-    /**
-     * @param string $text          input text
-     * @param string $startRuleName start rule name for tokenization
-     *
-     * @return \ViKon\Parser\TokenList|bool FALSE on failure otherwise TokenList
-     */
+//    /**
+//     * @param string $text          input text
+//     * @param string $startRuleName start rule name for tokenization
+//     *
+//     * @return \ViKon\Parser\TokenList
+//     */
     public function tokenize($text, $startRuleName)
     {
         $tokenList = new TokenList();
@@ -136,49 +137,40 @@ class Lexer
             $remainingLength = strlen($text);
             $matchedPosition = $initialLength - $remainingLength - strlen($matched);
 
-            if (!$this->callParser($unmatched, $currentPosition, self::STATE_UNMATCHED, $tokenList))
-            {
-                echo 'a';
-                return false;
-            }
+            $this->callParser($unmatched, $currentPosition, self::STATE_UNMATCHED, $tokenList);
 
             if ($ruleName === self::RULE_EXIT)
             {
-                if (!$this->callParser($matched, $matchedPosition, self::STATE_EXIT, $tokenList) || !$this->stack->pop())
+                $this->callParser($matched, $matchedPosition, self::STATE_EXIT, $tokenList);
+                if (!$this->stack->pop())
                 {
-                    return false;
+                    throw new LexerException('Stack is empty after pop');
                 }
             }
             else if (strpos($ruleName, self::SINGLE_RULE_PREFIX) === 0)
             {
                 $this->stack->push(substr($ruleName, strlen(self::SINGLE_RULE_PREFIX)));
+                $this->callParser($matched, $matchedPosition, self::STATE_SINGLE, $tokenList);
 
-                if (!$this->callParser($matched, $matchedPosition, self::STATE_SINGLE, $tokenList) || !$this->stack->pop())
+                if (!$this->stack->pop())
                 {
-                    return false;
+                    throw new LexerException('Stack is empty after pop');
                 }
             }
             else if ($ruleName !== null)
             {
                 $this->stack->push($ruleName);
-
-                if (!$this->callParser($matched, $matchedPosition, self::STATE_ENTER, $tokenList))
-                {
-                    return false;
-                }
+                $this->callParser($matched, $matchedPosition, self::STATE_ENTER, $tokenList);
             }
-            else if (!$this->callParser($matched, $matchedPosition, self::STATE_MATCHED, $tokenList))
+            else
             {
-                return false;
+                $this->callParser($matched, $matchedPosition, self::STATE_MATCHED, $tokenList);
             }
 
             $currentPosition = $initialLength - $remainingLength;
         }
 
-        if (!$this->callParser($text, $currentPosition, self::STATE_END, $tokenList))
-        {
-            return false;
-        }
+        $this->callParser($text, $currentPosition, self::STATE_END, $tokenList);
 
         return $tokenList;
     }
@@ -207,23 +199,21 @@ class Lexer
         return true;
     }
 
-    /**
-     * @param string                  $content  matched content
-     * @param int                     $position match position
-     * @param string                  $state    matched state (entry, exit, single, matched, unmatched)
-     * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
-     */
+//    /**
+//     * @param string                  $content  matched content
+//     * @param int                     $position match position
+//     * @param string                  $state    matched state (entry, exit, single, matched, unmatched)
+//     * @param \ViKon\Parser\TokenList $tokenList
+//     */
     protected function callParser($content, $position, $state, TokenList $tokenList)
     {
         if ($content === '')
         {
-            return true;
+            return;
         }
 
         $ruleName = $this->stack->top();
 
-        return $this->parser->parseToken($ruleName, $content, $position, $state, $tokenList);
+        $this->parser->parseToken($ruleName, $content, $position, $state, $tokenList);
     }
 }

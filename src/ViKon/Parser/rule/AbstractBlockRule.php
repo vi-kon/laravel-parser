@@ -85,80 +85,72 @@ abstract class AbstractBlockRule extends AbstractRule
      * @param int                     $state     matched state
      * @param \ViKon\Parser\TokenList $tokenList token list
      *
-     * @return bool
+     * @throws \ViKon\Parser\rule\RuleException
      */
     public function parseToken($content, $position, $state, TokenList $tokenList)
     {
         switch ($state)
         {
             case Lexer::STATE_ENTER:
-                return $this->handleEntryState($content, $position, $tokenList);
+                $this->handleEntryState($content, $position, $tokenList);
+                break;
 
             case Lexer::STATE_UNMATCHED:
-                return $this->handleUnmatchedState($content, $position, $tokenList);
+                $this->handleUnmatchedState($content, $position, $tokenList);
+                break;
 
             case Lexer::STATE_EXIT:
-                return $this->handleExitState($content, $position, $tokenList);
+                $this->handleExitState($content, $position, $tokenList);
+                break;
 
             case Lexer::STATE_END:
-                return $this->handleEndState($content, $position, $tokenList);
-        }
+                $this->handleEndState($content, $position, $tokenList);
+                break;
 
-        return false;
+            default:
+                throw new RuleException($state . ' state not handled');
+                break;
+        }
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleEntryState($content, $position, TokenList $tokenList)
     {
         $tokenList->addToken($this->name . '_open', $position);
-
-        return true;
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleUnmatchedState($content, $position, TokenList $tokenList)
     {
-        return $this->parseContent($content, $tokenList);
+        $this->parseContent($content, $tokenList);
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleExitState($content, $position, TokenList $tokenList)
     {
         $tokenList->addToken($this->name . '_close', $position);
-
-        return true;
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleEndState($content, $position, TokenList $tokenList)
     {
         $tokenList->addToken($this->name, $position)
                   ->set('content', $content);
-
-        return true;
     }
 }

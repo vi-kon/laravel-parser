@@ -26,7 +26,5 @@ class HeaderSetext extends AbstractSingleRule
                       ? 1
                       : 2)
                   ->set('content', trim($content, "-= \t"));
-
-        return true;
     }
 }

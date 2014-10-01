@@ -25,24 +25,21 @@ class CodeBlock extends AbstractBlockRule
 
     public function parseToken($content, $position, $state, TokenList $tokenList)
     {
-        if (!parent::parseToken($content, $position, $state, $tokenList))
+        switch ($state)
         {
-            switch ($state)
-            {
-                case Lexer::STATE_MATCHED:
-                    $token = $tokenList->addToken($this->name, $position);
-                    $token->set('content', str_repeat("\n", substr_count($content, "\n")));
-                    break;
+            case Lexer::STATE_MATCHED:
+                $token = $tokenList->addToken($this->name, $position);
+                $token->set('content', str_repeat("\n", substr_count($content, "\n")));
+                break;
 
-                default:
-                    return false;
-            }
+            default:
+                parent::parseToken($content, $position, $state, $tokenList);
+                break;
         }
-
-        return true;
     }
 
     public function prepare(Lexer $lexer)
     {
+        return $this;
     }
 }

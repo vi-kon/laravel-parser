@@ -44,10 +44,13 @@ class ListBlock extends AbstractBlockRule
         switch ($state)
         {
             case Lexer::STATE_MATCHED:
-                return $this->handleMatchedState($content, $position, $tokenList);
-        }
+                $this->handleMatchedState($content, $position, $tokenList);
+                break;
 
-        return parent::parseToken($content, $position, $state, $tokenList);
+            default:
+                parent::parseToken($content, $position, $state, $tokenList);
+                break;
+        }
     }
 
     /**
@@ -65,15 +68,13 @@ class ListBlock extends AbstractBlockRule
 
         $tokenList->addToken($this->name . '_open', $position);
 
-        return $this->handleMatchedState($content, $position, $tokenList);
+        $this->handleMatchedState($content, $position, $tokenList);
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleMatchedState($content, $position, TokenList $tokenList)
     {
@@ -83,15 +84,13 @@ class ListBlock extends AbstractBlockRule
             $ordered   = is_numeric(substr($matches[3], 0, -1));
             $paragraph = strlen($matches[1]) > 0;
 
-            if (!$this->closeLevels($tokenList, $level, $position))
-            {
-                return false;
-            }
+            $this->closeLevels($tokenList, $level, $position);
+
             $this->openLevels($tokenList, $level, $ordered, $position);
 
-            if (isset($this->open[$this->level]) && $this->open[$this->level] && !$this->itemClose($tokenList, $position))
+            if (isset($this->open[$this->level]) && $this->open[$this->level])
             {
-                return false;
+                $this->itemClose($tokenList, $position);
             }
             $this->open[$this->level] = true;
             $tokenList->addToken($this->name . '_item_open', $position);
@@ -106,8 +105,6 @@ class ListBlock extends AbstractBlockRule
             });
             $lastToken->set('content', $lastToken->get('content', '') . implode("\n", $content));
         }
-
-        return true;
     }
 
     /**
@@ -129,26 +126,17 @@ class ListBlock extends AbstractBlockRule
             $tokenList->addToken($this->name, $position)
                       ->set('content', $content);
         }
-
-        return true;
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleExitState($content, $position, TokenList $tokenList)
     {
-        if (!$this->closeLevels($tokenList, -1, $position))
-        {
-            return false;
-        }
+        $this->closeLevels($tokenList, -1, $position);
         $tokenList->addToken($this->name . '_close', $position);
-
-        return true;
     }
 
     /**
@@ -171,21 +159,17 @@ class ListBlock extends AbstractBlockRule
      * @param TokenList $tokenList token list
      * @param int       $level     actual level deep
      * @param int       $position  match position
-     *
-     * @return bool
      */
     protected function closeLevels(TokenList $tokenList, $level, $position)
     {
         for ($this->level; $this->level > $level; $this->level--)
         {
-            if (isset($this->open[$this->level]) && $this->open[$this->level] && !$this->itemClose($tokenList, $position))
+            if (isset($this->open[$this->level]) && $this->open[$this->level])
             {
-                return false;
+                $this->itemClose($tokenList, $position);
             }
             $tokenList->addToken($this->name . '_level_close', $position);
         }
-
-        return true;
     }
 
     /**
@@ -193,8 +177,6 @@ class ListBlock extends AbstractBlockRule
      *
      * @param TokenList $tokenList
      * @param int       $position
-     *
-     * @return bool FALSE on failure, otherwise TRUE
      */
     protected function itemClose(TokenList $tokenList, $position)
     {
@@ -203,14 +185,9 @@ class ListBlock extends AbstractBlockRule
         {
             $content = "\n" . $lastToken->get('content') . "\n";
             $tokenList->removeTokenAt($tokenList->size() - 1);
-            if (!$this->parseContent($content, $tokenList))
-            {
-                return false;
-            }
+            $this->parseContent($content, $tokenList);
         }
         $this->open[$this->level] = false;
         $tokenList->addToken($this->name . '_item_close', $position);
-
-        return true;
     }
 }

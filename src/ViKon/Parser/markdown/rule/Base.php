@@ -24,13 +24,13 @@ class Base extends AbstractRule
             $this->set->getRuleNamesByCategory(MarkdownSet::CATEGORY_FORMAT),
             $this->set->getRuleNamesByCategory(MarkdownSet::CATEGORY_SINGLE)
         );
+
+        return $this;
     }
 
     public function parseToken($content, $position, $state, TokenList $tokenList)
     {
         $tokenList->addToken($this->name, $position)
                   ->set('content', $content);
-
-        return true;
     }
 }

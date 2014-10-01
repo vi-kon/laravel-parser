@@ -24,7 +24,5 @@ class HeaderAtx extends AbstractSingleRule
         $tokenList->addToken($this->name, $position)
                   ->set('level', abs(strlen($matches[0])))
                   ->set('content', trim($content, "# \t"));
-
-        return true;
     }
 }

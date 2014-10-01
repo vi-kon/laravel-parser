@@ -46,30 +46,28 @@ abstract class AbstractSingleRule extends AbstractRule
      * @param int                     $state     matched state
      * @param \ViKon\Parser\TokenList $tokenList token list
      *
-     * @return bool
+     * @throws \ViKon\Parser\rule\RuleException
      */
     public function parseToken($content, $position, $state, TokenList $tokenList)
     {
         switch ($state)
         {
             case Lexer::STATE_SINGLE:
-                return $this->handleSingleState($content, $position, $tokenList);
-        }
+                $this->handleSingleState($content, $position, $tokenList);
+                break;
 
-        return false;
+            default:
+                throw new RuleException($state . ' state not handled or unknown');
+        }
     }
 
     /**
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
-     *
-     * @return bool
      */
     protected function handleSingleState($content, $position, TokenList $tokenList)
     {
         $tokenList->addToken($this->name, $position);
-
-        return true;
     }
 }

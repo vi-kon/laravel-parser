@@ -18,5 +18,6 @@ class Code extends AbstractFormatRule
 
     public function prepare(Lexer $lexer)
     {
+        return $this;
     }
 }

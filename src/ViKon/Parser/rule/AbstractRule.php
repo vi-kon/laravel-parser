@@ -125,12 +125,9 @@ abstract class AbstractRule
      * @param int                     $position  matched token position
      * @param int                     $state     matched state
      * @param \ViKon\Parser\TokenList $tokenList token list
-     *
-     * @return bool
      */
     public function parseToken($content, $position, $state, TokenList $tokenList)
     {
-        return true;
     }
 
     /**
@@ -139,24 +136,18 @@ abstract class AbstractRule
      * @param string    $content
      * @param TokenList $tokenList
      *
-     * @return bool FALSE on failure, otherwise TRUE
      * @throws \ViKon\Parser\ParserException
      */
     protected function parseContent($content, TokenList $tokenList)
     {
         $parser = new Parser();
         $lexer  = new Lexer();
+
         $this->set->init($parser, $lexer);
+
         $parser->setStartRule($this);
 
         $childTokenList = $parser->parse($content, true);
-        if ($childTokenList === false)
-        {
-            return false;
-        }
-
         $tokenList->merge($childTokenList);
-
-        return true;
     }
 }
