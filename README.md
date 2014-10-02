@@ -12,7 +12,9 @@ This is **Laravel 4** package for text parsing by custom rulesets.
 
 ## Known issues
 
-* none
+* markdown
+  * list items are always formatted as paragraph
+  * links label not accepts inner formatting options
 
 ---
 [Back to top][top]
@@ -34,19 +36,5 @@ This is **Laravel 4** package for text parsing by custom rulesets.
 ## Base principe
 
 TODO
-
-## Classes
-
-* AbstractNodeRenderer
-* Renderer
-* AbstractRuleSet
-* Lexer
-* LexerRulePattern
-* Parser
-* ParserException
-* ParserServiceProvider
-* Renderer
-* SyntaxNode
-* SyntaxTree
 
 [top]: #laravel-4-parser-and-lexer
