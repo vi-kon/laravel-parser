@@ -115,15 +115,20 @@ class Lexer
         return $this;
     }
 
-//    /**
-//     * @param string $text          input text
-//     * @param string $startRuleName start rule name for tokenization
-//     *
-//     * @return \ViKon\Parser\TokenList
-//     */
-    public function tokenize($text, $startRuleName)
+    /**
+     * @param string                  $text          input text
+     * @param string                  $startRuleName start rule name for tokenization
+     * @param \ViKon\Parser\TokenList $tokenList     already initialized token list
+     *
+     * @throws \ViKon\Parser\LexerException
+     * @return \ViKon\Parser\TokenList
+     */
+    public function tokenize($text, $startRuleName, TokenList $tokenList = null)
     {
-        $tokenList = new TokenList();
+        if ($tokenList === null)
+        {
+            $tokenList = new TokenList();
+        }
 
         $currentPosition = 0;
         $initialLength   = strlen($text);

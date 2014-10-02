@@ -10,7 +10,7 @@ class TokenList
     protected $tokens = array();
 
     /** @var string[] */
-    protected $openTokens = array();
+    protected $openedTokens = array();
 
     /**
      * Add token to token list
@@ -28,12 +28,12 @@ class TokenList
         switch (substr($name, -4))
         {
             case 'open':
-                $this->openTokens[] = substr($name, 0, -5);
+                $this->openedTokens[] = substr($name, 0, -5);
                 break;
             case 'close':
-                while (count($this->openTokens) > 0)
+                while (count($this->openedTokens) > 0)
                 {
-                    $lastOpenToken  = array_pop($this->openTokens);
+                    $lastOpenToken  = array_pop($this->openedTokens);
                     $this->tokens[] = new Token($lastOpenToken . '_close', $position);
                     if ($lastOpenToken == substr($name, 0, -5))
                     {
@@ -90,6 +90,22 @@ class TokenList
     public function getTokens()
     {
         return $this->tokens;
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return \ViKon\Parser\Token[]
+     * @throws \ViKon\Parser\LexerException
+     */
+    public function getTokensByCallback($callback)
+    {
+        if (!is_callable($callback))
+        {
+            throw new LexerException('Not valid callback provided');
+        }
+
+        return array_filter($this->tokens, $callback);
     }
 
     /**
@@ -152,9 +168,9 @@ class TokenList
     public function closeOpenTokens()
     {
         $lastToken = $this->last();
-        while (count($this->openTokens) > 0)
+        while (count($this->openedTokens) > 0)
         {
-            $lastOpenToken  = array_pop($this->openTokens);
+            $lastOpenToken  = array_pop($this->openedTokens);
             $this->tokens[] = new Token($lastOpenToken . '_close', $lastToken->getPosition());
         }
     }

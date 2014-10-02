@@ -78,13 +78,15 @@ class Parser
     /**
      * Parse text by provided rules
      *
-     * @param string $text      raw data
-     * @param bool   $recursive called recursive
+     * @param string    $text      raw data
+     * @param TokenList $tokenList already initialized token list
+     * @param bool      $recursive call is recursive or not
      *
-     * @throws \ViKon\Parser\ParserException
+     * @throws LexerException
+     * @throws ParserException
      * @return \ViKon\Parser\TokenList
      */
-    public function parse($text, $recursive = false)
+    public function parse($text, TokenList $tokenList = null, $recursive = false)
     {
         if ($this->startRule === null)
         {
@@ -102,9 +104,9 @@ class Parser
 
         \Event::fire('vikon.parser.before.parse', array(&$text));
 
-        $tokenList = $this->lexer->tokenize($text, $this->startRule->getName());
+        $tokenList = $this->lexer->tokenize($text, $this->startRule->getName(), $tokenList);
 
-        if ($recursive !== true)
+        if ($recursive === false)
         {
             foreach ($this->rules as $rule)
             {
