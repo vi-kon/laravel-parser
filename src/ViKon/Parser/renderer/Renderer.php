@@ -67,7 +67,7 @@ class Renderer
         {
             if (array_key_exists($token->getName(), $this->tokenRenderers[$skin]))
             {
-                $output .= $this->tokenRenderers[$skin][$token->getName()]($token);
+                $output .= $this->tokenRenderers[$skin][$token->getName()]($token, $tokenList);
             }
             else
             {

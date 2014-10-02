@@ -17,10 +17,10 @@ abstract class AbstractRuleRenderer
      * @param string                    $skin
      * @param \ViKon\Parser\AbstractSet $set
      */
-    public function __construct($skin = 'default', AbstractSet $set)
+    public function __construct(AbstractSet $set, $skin = 'default')
     {
-        $this->skin = $skin;
         $this->set  = $set;
+        $this->skin = $skin;
     }
 
     /**

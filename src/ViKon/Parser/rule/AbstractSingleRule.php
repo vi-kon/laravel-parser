@@ -9,7 +9,7 @@ use ViKon\Parser\TokenList;
 
 abstract class AbstractSingleRule extends AbstractRule
 {
-    /** @var string */
+    /** @var string|string[] */
     protected $pattern;
 
     /**
@@ -35,7 +35,17 @@ abstract class AbstractSingleRule extends AbstractRule
      */
     public function embedInto($parentParentRuleName, Lexer $lexer)
     {
-        $lexer->addSinglePattern($this->pattern, $parentParentRuleName, $this->name);
+        if (is_array($this->pattern))
+        {
+            foreach ($this->pattern as $pattern)
+            {
+                $lexer->addSinglePattern($pattern, $parentParentRuleName, $this->name);
+            }
+        }
+        else
+        {
+            $lexer->addSinglePattern($this->pattern, $parentParentRuleName, $this->name);
+        }
 
         return $this;
     }

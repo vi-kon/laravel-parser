@@ -3,7 +3,7 @@
 
 namespace ViKon\Parser\markdown\rule\single;
 
-use ViKon\Parser\AbstractSet;
+use ViKon\Parser\markdown\MarkdownSet;
 use ViKon\Parser\rule\AbstractSingleRule;
 use ViKon\Parser\TokenList;
 
@@ -11,7 +11,12 @@ class HeaderAtx extends AbstractSingleRule
 {
     const NAME = 'header_atx';
 
-    public function __construct(AbstractSet $set)
+    /**
+     * Create new Header ATX rule
+     *
+     * @param \ViKon\Parser\markdown\MarkdownSet $set rule set instance
+     */
+    public function __construct(MarkdownSet $set)
     {
         parent::__construct(self::NAME, 50, '^[ \t]*#{1,6}[^\n]+(?=\n)', $set);
     }
@@ -24,5 +29,7 @@ class HeaderAtx extends AbstractSingleRule
         $tokenList->addToken($this->name, $position)
                   ->set('level', abs(strlen($matches[0])))
                   ->set('content', trim($content, "# \t"));
+
+        return true;
     }
 }

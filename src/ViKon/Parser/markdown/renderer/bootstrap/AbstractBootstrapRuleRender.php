@@ -10,6 +10,6 @@ abstract class AbstractBootstrapRuleRender extends AbstractRuleRenderer
 {
     public function __construct(AbstractSet $set)
     {
-        parent::__construct('bootstrap', $set);
+        parent::__construct($set, 'bootstrap');
     }
 }

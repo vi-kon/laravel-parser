@@ -14,6 +14,7 @@ class Eol extends AbstractSingleRule
      * Create new EOL rule
      *
      * @param \ViKon\Parser\markdown\MarkdownSet $set rule set instance
+     *
      */
     public function __construct(MarkdownSet $set)
     {

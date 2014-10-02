@@ -138,7 +138,7 @@ abstract class AbstractRule
      *
      * @throws \ViKon\Parser\ParserException
      */
-    protected function parseContent($content, TokenList $tokenList)
+    protected function parseContent($content, TokenList &$tokenList)
     {
         $parser = new Parser();
         $lexer  = new Lexer();
@@ -146,8 +146,6 @@ abstract class AbstractRule
         $this->set->init($parser, $lexer);
 
         $parser->setStartRule($this);
-
-        $childTokenList = $parser->parse($content, true);
-        $tokenList->merge($childTokenList);
+        $tokenList = $parser->parse($content, $tokenList, true);
     }
 }

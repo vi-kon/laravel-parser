@@ -7,6 +7,8 @@ use ViKon\Parser\AbstractSet;
 use ViKon\Parser\lexer\Lexer;
 use ViKon\Parser\markdown\MarkdownSet;
 use ViKon\Parser\markdown\rule\single\Eol;
+use ViKon\Parser\markdown\rule\single\Link;
+use ViKon\Parser\markdown\rule\single\LinkReference;
 use ViKon\Parser\rule\AbstractBlockRule;
 use ViKon\Parser\TokenList;
 
@@ -28,6 +30,8 @@ class ListBlock extends AbstractBlockRule
         $this->acceptedRuleNames = array_merge(array(
                                                    CodeBlock::NAME,
                                                    Eol::NAME,
+                                                   Link::NAME,
+                                                   LinkReference::NAME,
                                                ), $this->set->getRuleNamesByCategory(MarkdownSet::CATEGORY_FORMAT));
     }
 

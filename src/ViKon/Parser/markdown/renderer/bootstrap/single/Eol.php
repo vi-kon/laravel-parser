@@ -18,6 +18,6 @@ class Eol extends AbstractBootstrapRuleRender
 
     public function renderEol(Token $token)
     {
-        return '';
+        return "\n";
     }
 }
