@@ -40,6 +40,7 @@ class LinkReference extends AbstractSingleRule
         $referenceToken = reset($referenceTokens);
 
         $tokenList->addToken($this->name, $position)
+                  ->set('match', $matches[0])
                   ->set('label', $matches[1])
                   ->set('reference', $referenceToken === false
                       ? $matches[2]

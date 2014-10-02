@@ -23,6 +23,6 @@ class Reference extends AbstractBootstrapRuleRender
             return '';
         }
 
-        return '[' . $token->get('reference') . ']: ' . $token->get('url');
+        return $token->get('match');
     }
 }

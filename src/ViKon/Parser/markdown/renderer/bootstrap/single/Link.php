@@ -21,7 +21,11 @@ class Link extends AbstractBootstrapRuleRender
 
     public function renderLink(Token $token)
     {
-        return '<a href="' . $token->get('url') . '">' . $token->get('label') . '</a>';
+        $title = $token->get('title', null) === null
+            ? ''
+            : ' title="' . $token->get('title') . '"';
+
+        return '<a href="' . $token->get('url') . '"' . $title . '>' . $token->get('label') . '</a>';
     }
 
     public function renderLinkReference(Token $token, TokenList $tokenList)
@@ -45,12 +49,16 @@ class Link extends AbstractBootstrapRuleRender
 
             if (($referenceToken = reset($tokens)) === false)
             {
-                return '[' . $token->get('label', '') . '][' . $token->get('reference', '') . ']';
+                return $token->get('match', '');
             }
 
             $referenceToken->set('used', true);
         }
 
-        return '<a href="' . $referenceToken->get('url') . '">' . $token->get('label') . '</a>';
+        $title = $referenceToken->get('title', null) === null
+            ? ''
+            : ' title="' . $referenceToken->get('title') . '"';
+
+        return '<a href="' . $referenceToken->get('url') . '"' . $title . '>' . $token->get('label') . '</a>';
     }
 }
