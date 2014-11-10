@@ -3,9 +3,9 @@
 
 namespace ViKon\Parser\rule;
 
-use ViKon\Parser\Lexer;
-use ViKon\Parser\SyntaxNode;
-use ViKon\Parser\SyntaxTree;
+use ViKon\Parser\AbstractSet;
+use ViKon\Parser\lexer\Lexer;
+use ViKon\Parser\TokenList;
 
 abstract class AbstractBlockRule extends AbstractRule
 {
@@ -16,101 +16,141 @@ abstract class AbstractBlockRule extends AbstractRule
     protected $exitPattern;
 
     /**
-     * @param string          $name         rule name
-     * @param int             $order        order number
-     * @param string|string[] $entryPattern entry pattern(s)
-     * @param string|string[] $exitPattern  exit pattern(s)
+     * @param string                    $name         rule name
+     * @param int                       $order        order number
+     * @param string|string[]           $entryPattern entry pattern(s)
+     * @param string|string[]           $exitPattern  exit pattern(s)
+     * @param \ViKon\Parser\AbstractSet $set          rule set instance
      */
-    public function __construct($name, $order, $entryPattern, $exitPattern)
+    public function __construct($name, $order, $entryPattern, $exitPattern, AbstractSet $set)
     {
-        parent::__construct($name, $order, self::CATEGORY_BLOCK);
+        parent::__construct($name, $order, $set);
 
         $this->entryPattern = $entryPattern;
         $this->exitPattern  = $exitPattern;
     }
 
-    public function connect($ruleName)
+    /**
+     * Embed rule into parent rule
+     *
+     * @param string                    $parentRuleNameName parent rule name
+     * @param \ViKon\Parser\lexer\Lexer $lexer              lexer instance
+     *
+     * @return $this
+     */
+    public function embedInto($parentRuleNameName, Lexer $lexer)
     {
         if (is_array($this->entryPattern))
         {
             foreach ($this->entryPattern as $entryPattern)
             {
-                $this->lexer->addEntryPattern($entryPattern, $ruleName, $this->name);
+                $lexer->addEntryPattern($entryPattern, $parentRuleNameName, $this->name);
             }
-
-            return;
         }
-        $this->lexer->addEntryPattern($this->entryPattern, $ruleName, $this->name);
+        else
+        {
+            $lexer->addEntryPattern($this->entryPattern, $parentRuleNameName, $this->name);
+        }
+
+        return $this;
     }
 
-    public function finish()
+    /**
+     * Finish rule after connecting
+     *
+     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
+     *
+     * @return $this
+     */
+    public function finish(Lexer $lexer)
     {
         if (is_array($this->exitPattern))
         {
             foreach ($this->exitPattern as $exitPattern)
             {
-                $this->lexer->addExitPattern($exitPattern, $this->name);
+                $lexer->addExitPattern($exitPattern, $this->name);
             }
-
-            return;
         }
-        $this->lexer->addExitPattern($this->exitPattern, $this->name);
+        else
+        {
+            $lexer->addExitPattern($this->exitPattern, $this->name);
+        }
+
+        return $this;
     }
 
-    public function parseToken($content, $position, $state, SyntaxTree $syntaxTree)
+    /**
+     * @param string                  $content   matched token string
+     * @param int                     $position  matched token position
+     * @param int                     $state     matched state
+     * @param \ViKon\Parser\TokenList $tokenList token list
+     *
+     * @throws \ViKon\Parser\rule\RuleException
+     */
+    public function parseToken($content, $position, $state, TokenList $tokenList)
     {
         switch ($state)
         {
             case Lexer::STATE_ENTER:
-                $this->resetTokenParser();
-                $syntaxTree->openNode($this->name);
-                $node = $syntaxTree->addNode($this->name . '_open', $position);
-                $this->handleEntryState($node, $content, $position);
+                $this->handleEntryState($content, $position, $tokenList);
                 break;
 
             case Lexer::STATE_UNMATCHED:
-                $node = $syntaxTree->addNode($this->name, $position);
-                $this->handleUnmatchedState($node, $content, $position);
+                $this->handleUnmatchedState($content, $position, $tokenList);
                 break;
 
             case Lexer::STATE_EXIT:
-                $node = $syntaxTree->addNode($this->name . '_close', $position);
-                $this->handleExitState($node, $content, $position);
-                $syntaxTree->closeNode();
+                $this->handleExitState($content, $position, $tokenList);
+                break;
+
+            case Lexer::STATE_END:
+                $this->handleEndState($content, $position, $tokenList);
                 break;
 
             default:
-                return false;
+                throw new RuleException($state . ' state not handled');
+                break;
         }
-
-        return true;
     }
 
     /**
-     * @param SyntaxNode  $node
-     * @param string $content
-     * @param int    $position
+     * @param string                  $content
+     * @param int                     $position
+     * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleEntryState(SyntaxNode $node, $content, $position)
+    protected function handleEntryState($content, $position, TokenList $tokenList)
     {
+        $tokenList->addToken($this->name . '_open', $position);
     }
 
     /**
-     * @param SyntaxNode  $node
-     * @param string $content
-     * @param int    $position
+     * @param string                  $content
+     * @param int                     $position
+     * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleUnmatchedState(SyntaxNode $node, $content, $position)
+    protected function handleUnmatchedState($content, $position, TokenList $tokenList)
     {
-        $node->setData('content', $content);
+        $this->parseContent($content, $tokenList);
     }
 
     /**
-     * @param SyntaxNode  $node
-     * @param string $content
-     * @param int    $position
+     * @param string                  $content
+     * @param int                     $position
+     * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleExitState(SyntaxNode $node, $content, $position)
+    protected function handleExitState($content, $position, TokenList $tokenList)
     {
+        $tokenList->addToken($this->name . '_close', $position);
+    }
+
+    /**
+     * @param string                  $content
+     * @param int                     $position
+     * @param \ViKon\Parser\TokenList $tokenList
+     */
+    protected function handleEndState($content, $position, TokenList $tokenList)
+    {
+        $tokenList->addToken($this->name, $position)
+                  ->set('content', $content);
     }
 }

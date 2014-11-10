@@ -1,159 +1,197 @@
 <?php
 
-
 namespace ViKon\Parser;
 
+use ViKon\Parser\lexer\Lexer;
+use ViKon\Parser\renderer\Renderer;
 use ViKon\Parser\rule\AbstractRule;
 
 class Parser
 {
-    /** @var AbstractRule[] */
-    protected $rules = array();
+    /** @var \ViKon\Parser\rule\AbstractRule|null */
+    private $startRule = null;
 
-    /** @var bool */
-    protected $rulesInitialized = false;
+    /** @var \ViKon\Parser\rule\AbstractRule[] */
+    private $rules = array();
 
-    /** @var null|Lexer */
-    protected $lexer = null;
+    /** @var \ViKon\Parser\lexer\Lexer|null */
+    private $lexer = null;
+
+    /** @var \ViKon\Parser\renderer\Renderer|null */
+    private $renderer = null;
 
     /**
-     * Add rule to ViKon\Parser
+     * @param \ViKon\Parser\lexer\Lexer $lexer
      *
-     * @param AbstractRule $rule
-     *
-     * @throws ParserException
      * @return $this
      */
-    public function addRule(AbstractRule $rule)
+    public function setLexer(Lexer $lexer)
     {
-        if ($this->lexer === null)
-        {
-            throw new ParserException('Lexer not set');
-        }
-
-        if (isset($this->rules[$rule->getName()]))
-        {
-            throw new ParserException('Rule with ' . $rule->getName() . 'already exists');
-        }
-
-        $rule->setLexer($this->lexer);
-        $rule->setParser($this);
-
-        $this->rules[$rule->getName()] = $rule;
-        $this->rulesInitialized        = false;
+        $this->lexer = $lexer;
 
         return $this;
     }
 
     /**
-     * Get rules
-     *
-     * @return rule\AbstractRule[]
+     * @param \ViKon\Parser\renderer\Renderer $renderer
      */
-    public function getRules()
+    public function setRenderer(Renderer $renderer)
     {
-        return $this->rules;
+        $this->renderer = $renderer;
     }
 
     /**
-     * Set lexer
+     * Set start rule for parser
      *
-     * @param Lexer $lexer
+     * @param \ViKon\Parser\rule\AbstractRule $rule rule instance
+     *
+     * @return $this
      */
-    public function setLexer(Lexer $lexer)
+    public function setStartRule(AbstractRule $rule)
     {
-        $this->lexer = $lexer;
-        $this->lexer->setParser($this);
+        $this->startRule = $rule;
+
+        return $this;
     }
 
     /**
-     * Get lexer
+     * Add rule to parser
      *
-     * @return null|Lexer
+     * @param \ViKon\Parser\rule\AbstractRule $rule rule instance
+     *
+     * @throws \ViKon\Parser\ParserException throws if rule already exists with same name
+     *
+     * @return $this
      */
-    public function getLexer()
+    public function addRule(AbstractRule $rule)
     {
-        return $this->lexer;
+        if (array_key_exists($rule->getName(), $this->rules))
+        {
+            throw new ParserException('Rule with ' . $rule->getName() . ' name already exists');
+        }
+
+        $this->rules[$rule->getName()] = $rule;
+
+        return $this;
     }
 
     /**
-     * Parse raw data
+     * Parse text by provided rules
      *
-     * @param string $raw data to parse
+     * @param string    $text      raw data
+     * @param TokenList $tokenList already initialized token list
+     * @param bool      $recursive call is recursive or not
      *
-     * @return bool|\ViKon\Parser\SyntaxTree
+     * @throws LexerException
      * @throws ParserException
+     * @return \ViKon\Parser\TokenList
      */
-    public function parse($raw)
+    public function parse($text, TokenList $tokenList = null, $recursive = false)
     {
+        if ($this->startRule === null)
+        {
+            throw new ParserException('Start rule not set');
+        }
+
         if ($this->lexer === null)
         {
             throw new ParserException('Lexer not set');
         }
 
-        $raw = "\n" . str_replace("\r\n", "\n", $raw) . "\n";
+        uasort($this->rules, array($this, 'sortRulesByOrder'));
 
-        $this->initRules();
+        $this->connectRulesToLexer();
 
-        return $this->lexer->tokenize($raw);
+        \Event::fire('vikon.parser.before.parse', array(&$text));
+
+        $tokenList = $this->lexer->tokenize($text, $this->startRule->getName(), $tokenList);
+
+        if ($recursive === false)
+        {
+            foreach ($this->rules as $rule)
+            {
+                $rule->finalize($tokenList);
+            }
+        }
+
+        return $tokenList;
+    }
+
+    /**
+     * Parse text by provided rules and try to render token list
+     *
+     * @param string $text raw data
+     * @param string $skin used skin
+     *
+     * @throws \ViKon\Parser\ParserException
+     *
+     * @return string
+     */
+    public function render($text, $skin)
+    {
+        if ($this->renderer === null)
+        {
+            throw new ParserException('Renderer not set');
+        }
+
+        $tokenList = $this->parse($text);
+
+        return $this->renderer->render($tokenList, $skin);
     }
 
     /**
      * Parse token
      *
-     * @param string     $content  token content
-     * @param int        $position token position in raw data
-     * @param string     $ruleName rule name
-     * @param int        $state    token found state
-     * @param SyntaxTree $syntaxTree
+     * @param string                  $ruleName  rule name
+     * @param string                  $content   token content
+     * @param int                     $position  token position in raw data
+     * @param int                     $state     token found state
+     * @param \ViKon\Parser\TokenList $tokenList token list instance
      *
-     * @throws ParserException
+     * @throws \ViKon\Parser\ParserException
      * @return bool
      */
-    public function parseToken($content, $position, $ruleName, $state, SyntaxTree $syntaxTree)
+    public function parseToken($ruleName, $content, $position, $state, TokenList $tokenList)
     {
         if (!isset($this->rules[$ruleName]))
         {
-            throw new ParserException('Rule with name ' . $ruleName . ' not found');
+            throw new ParserException('Rule with name "' . $ruleName . '" not found');
         }
 
-        return $this->rules[$ruleName]->parseToken($content, $position, $state, $syntaxTree);
+        $this->rules[$ruleName]->parseToken($content, $position, $state, $tokenList);
     }
 
-    protected function initRules()
+    /**
+     * Add rule patterns to lexer
+     */
+    protected function connectRulesToLexer()
     {
-        foreach ($this->rules as $rule)
-        {
-            $rule->resetTokenParser();
-        }
-
-        if ($this->rulesInitialized)
-        {
-            return;
-        }
-
-        $this->lexer->reset();
-
-        uasort($this->rules, array($this, 'sortRulesByOrder'));
-
         foreach ($this->rules as $childRule)
         {
-            $childRule->prepare();
+            $childRule->prepare($this->lexer);
 
-            foreach ($this->rules as $rule)
+            if ($childRule->getName() === $this->startRule->getName())
             {
-                if ($rule->accepts($childRule->getName()))
-                {
-                    $childRule->connect($rule->getName());
-                }
+                continue;
             }
 
-            $childRule->finish();
-        }
+            if ($this->startRule->acceptRule($childRule->getName()))
+            {
+                $childRule->embedInto($this->startRule->getName(), $this->lexer);
+            }
 
-        $this->rulesInitialized = true;
+            $childRule->finish($this->lexer);
+        }
     }
 
+    /**
+     * Sort rules by order ASC
+     *
+     * @param \ViKon\Parser\rule\AbstractRule $a
+     * @param \ViKon\Parser\rule\AbstractRule $b
+     *
+     * @return int
+     */
     protected function sortRulesByOrder(AbstractRule $a, AbstractRule $b)
     {
         if ($a->getOrder() == $b->getOrder())

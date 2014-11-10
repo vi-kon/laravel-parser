@@ -1,120 +1,41 @@
 <?php
 
-
 namespace ViKon\Parser\rule;
 
-use ViKon\Parser\Lexer;
+use ViKon\Parser\AbstractSet;
+use ViKon\Parser\lexer\Lexer;
 use ViKon\Parser\Parser;
-use ViKon\Parser\SyntaxTree;
+use ViKon\Parser\TokenList;
 
 abstract class AbstractRule
 {
-    const CATEGORY_NONE = 0;
-    const CATEGORY_BLOCK = 1;
-    const CATEGORY_FORMAT = 2;
-    const CATEGORY_SINGLE = 3;
-
-    /** @var string[][] */
-    protected static $categories = array();
-
     /** @var string */
     protected $name;
 
     /** @var int */
     protected $order;
 
-    /** @var int */
-    private $category;
-
     /** @var string[] */
-    protected $acceptedChildRules = array();
+    protected $acceptedRuleNames = array();
 
-    /** @var null|Parser */
-    protected $parser = null;
-
-    /** @var null|Lexer */
-    protected $lexer = null;
+    /** @var \ViKon\Parser\AbstractSet */
+    protected $set;
 
     /**
-     * @param string $name  rule name
-     * @param int    $order rule order number
-     * @param int    $category
+     * Create new rule
+     *
+     * @param string                    $name  rule name
+     * @param int                       $order rule order no
+     * @param \ViKon\Parser\AbstractSet $set   rule set instance
      */
-    public function __construct($name, $order, $category)
+    public function __construct($name, $order, AbstractSet $set)
     {
-        $this->name     = $name;
-        $this->order    = $order;
-        $this->category = $category;
-
-        self::$categories[$category][] = $this->name;
+        $this->name  = $name;
+        $this->order = $order;
+        $this->set   = $set;
     }
 
     /**
-     * Check if rule accept named child rule
-     *
-     * @param string $ruleName rule name
-     *
-     * @return bool
-     */
-    public function accepts($ruleName)
-    {
-        return in_array($ruleName, $this->acceptedChildRules);
-    }
-
-    public function prepare()
-    {
-    }
-
-    /**
-     * Connect to another rule, that accept this rule
-     *
-     * @param string $ruleName another rule name that accept this rule
-     *
-     * @return $this
-     */
-    public function connect($ruleName)
-    {
-        return $this;
-    }
-
-    /**
-     * Finish connecting
-     *
-     * @return $this
-     */
-    public function finish()
-    {
-        return $this;
-    }
-
-    /**
-     * Handle token found by lexer
-     *
-     * @param string    $content
-     * @param int       $position
-     * @param int       $state
-     * @param SyntaxTree $syntaxTree
-     *
-     * @return bool
-     */
-    public function parseToken($content, $position, $state, SyntaxTree $syntaxTree)
-    {
-        return true;
-    }
-
-    /**
-     * Reset rule to defaults
-     *
-     * @return $this
-     */
-    public function resetTokenParser()
-    {
-        return $this;
-    }
-
-    /**
-     * Get rule name
-     *
      * @return string
      */
     public function getName()
@@ -123,10 +44,6 @@ abstract class AbstractRule
     }
 
     /**
-     * Get rule order
-     *
-     * Rule with smaller order number dominates if multiple rule have same syntax
-     *
      * @return int
      */
     public function getOrder()
@@ -135,60 +52,100 @@ abstract class AbstractRule
     }
 
     /**
-     * Get rule category
-     *
-     * @return int
+     * @return \ViKon\Parser\AbstractSet
      */
-    public function getCategory()
+    public function getSet()
     {
-        return $this->category;
+        return $this->set;
     }
 
     /**
-     * @param Lexer $lexer
+     * Prepare rule before connecting
+     *
+     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
      *
      * @return $this
      */
-    public function setLexer(Lexer $lexer)
+    public function prepare(Lexer $lexer)
     {
-        $this->lexer = $lexer;
-
         return $this;
     }
 
     /**
-     * @param Parser $parser
+     * Embed rule into parent rule
+     *
+     * @param string                    $parentParentRuleName parent rule name
+     * @param \ViKon\Parser\lexer\Lexer $lexer                lexer instance
      *
      * @return $this
      */
-    public function setParser(Parser $parser)
+    public function embedInto($parentParentRuleName, Lexer $lexer)
     {
-        $this->parser = $parser;
-
         return $this;
     }
 
     /**
-     * Set new category
+     * Finish rule after connecting
      *
-     * @param int $category
+     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
+     *
+     * @return $this
      */
-    protected function setCategory($category)
+    public function finish(Lexer $lexer)
     {
-        array_splice(self::$categories[$this->category], array_search($this->name, self::$categories[$this->category]), 1);
-        $this->category                      = $category;
-        self::$categories[$this->category][] = $this->name;
+        return $this;
     }
 
     /**
-     * @param int $category
+     * Run after lexer finish tokenization
      *
-     * @return string[]
+     * @param TokenList $tokenList tokenization result
+     *
+     * @return $this
      */
-    public static function getRuleNamesByCategory($category)
+    public function finalize(TokenList $tokenList)
     {
-        return isset(self::$categories[$category])
-            ? self::$categories[$category]
-            : array();
+        return $this;
+    }
+
+    /**
+     * Check if rule accepts named rule as child (sub)
+     *
+     * @param string $name rule name
+     *
+     * @return bool TRUE if accepts named rule
+     */
+    public function acceptRule($name)
+    {
+        return in_array($name, $this->acceptedRuleNames);
+    }
+
+    /**
+     * @param string                  $content   matched token string
+     * @param int                     $position  matched token position
+     * @param int                     $state     matched state
+     * @param \ViKon\Parser\TokenList $tokenList token list
+     */
+    public function parseToken($content, $position, $state, TokenList $tokenList)
+    {
+    }
+
+    /**
+     * Parse token match content
+     *
+     * @param string    $content
+     * @param TokenList $tokenList
+     *
+     * @throws \ViKon\Parser\ParserException
+     */
+    protected function parseContent($content, TokenList &$tokenList)
+    {
+        $parser = new Parser();
+        $lexer  = new Lexer();
+
+        $this->set->init($parser, $lexer);
+
+        $parser->setStartRule($this);
+        $tokenList = $parser->parse($content, $tokenList, true);
     }
 }
