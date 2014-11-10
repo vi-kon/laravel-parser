@@ -24,13 +24,13 @@ class Renderer
     }
 
     /**
-     * Add token renderer
+     * Set token renderer
      *
      * @param string   $tokenName token name
      * @param callable $callback  callback
      * @param string   $skin      renderer skin
      */
-    public function addTokenRenderer($tokenName, $callback, $skin = 'default')
+    public function setTokenRenderer($tokenName, $callback, $skin = 'default')
     {
         $this->tokenRenderers[$skin][$tokenName] = $callback;
     }
@@ -65,6 +65,8 @@ class Renderer
 
         foreach ($tokenList->getTokens() as $token)
         {
+            \Event::fire('vikon.parser.token.render.' . $token->getName(), array($token));
+
             if (array_key_exists($token->getName(), $this->tokenRenderers[$skin]))
             {
                 $output .= $this->tokenRenderers[$skin][$token->getName()]($token, $tokenList);

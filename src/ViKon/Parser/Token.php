@@ -114,7 +114,7 @@ class Token
 
     public function __toString()
     {
-        $output = $output = '<h3> ' . $this->position . ' - ' . $this->name . '</h3>';
+        $output = $output = '<h3>' . $this->name . '</h3>';
         if (count($this->data) > 0)
         {
             $output .= '<pre>' . htmlspecialchars(var_export($this->data, true)) . '</pre>';

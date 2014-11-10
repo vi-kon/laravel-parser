@@ -134,6 +134,46 @@ class TokenList
     }
 
     /**
+     * Get last token that match provided name
+     *
+     * @param string $name token name
+     *
+     * @return \ViKon\Parser\Token|null
+     */
+    public function lastByName($name)
+    {
+        for ($i = count($this->tokens) - 1; $i >= 0; $i--)
+        {
+            if ($this->tokens[$i]->getName() === $name)
+            {
+                return $this->tokens[$i];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get last token index that match provided name
+     *
+     * @param string $name token name
+     *
+     * @return int|null
+     */
+    public function lastIndexByName($name)
+    {
+        for ($i = count($this->tokens) - 1; $i >= 0; $i--)
+        {
+            if ($this->tokens[$i]->getName() === $name)
+            {
+                return $i;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Merge two token list
      *
      * @param TokenList $tokenList
