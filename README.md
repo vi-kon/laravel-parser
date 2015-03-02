@@ -1,6 +1,6 @@
-# Laravel 4 parser and lexer
+# Laravel 5 parser and lexer
 
-This is **Laravel 4** package for text parsing by custom rulesets.
+This is **Laravel 5** package for text parsing by custom rulesets.
 
 ## Table of content
 
@@ -31,10 +31,10 @@ This is **Laravel 4** package for text parsing by custom rulesets.
 
 * Parse text by custom rules
 * Nesting multiple rules
-* Multiple output renderes
+* Multiple output renderers
 
 ## Base principe
 
 TODO
 
-[top]: #laravel-4-parser-and-lexer
+[top]: #laravel-5-parser-and-lexer
