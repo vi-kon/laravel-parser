@@ -1,6 +1,6 @@
 {
     "name":              "vi-kon/laravel-parser",
-    "description":       "Parser and Lexer for Laravel 4",
+    "description":       "Parser and Lexer for Laravel 5",
     "keywords":          [
         "laravel",
         "parser",
