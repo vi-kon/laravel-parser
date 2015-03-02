@@ -6,8 +6,14 @@ namespace ViKon\Parser\rule;
 use ViKon\Parser\AbstractSet;
 use ViKon\Parser\lexer\Lexer;
 
-abstract class AbstractFormatRule extends AbstractBlockRule
-{
+/**
+ * Class AbstractFormatRule
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\rule
+ */
+abstract class AbstractFormatRule extends AbstractBlockRule {
     /**
      * Prepare rule before connecting
      *
@@ -15,8 +21,7 @@ abstract class AbstractFormatRule extends AbstractBlockRule
      *
      * @return $this
      */
-    public function prepare(Lexer $lexer)
-    {
+    public function prepare(Lexer $lexer) {
         $this->acceptedRuleNames = $this->set->getRuleNamesByCategory(AbstractSet::CATEGORY_FORMAT);
 
         return $this;

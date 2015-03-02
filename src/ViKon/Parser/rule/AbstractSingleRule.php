@@ -7,8 +7,14 @@ use ViKon\Parser\AbstractSet;
 use ViKon\Parser\lexer\Lexer;
 use ViKon\Parser\TokenList;
 
-abstract class AbstractSingleRule extends AbstractRule
-{
+/**
+ * Class AbstractSingleRule
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\rule
+ */
+abstract class AbstractSingleRule extends AbstractRule {
     /** @var string|string[] */
     protected $pattern;
 
@@ -18,8 +24,7 @@ abstract class AbstractSingleRule extends AbstractRule
      * @param string                    $pattern pattern for single rule
      * @param \ViKon\Parser\AbstractSet $set     rule set instance
      */
-    public function __construct($name, $order, $pattern, AbstractSet $set)
-    {
+    public function __construct($name, $order, $pattern, AbstractSet $set) {
         parent::__construct($name, $order, $set);
 
         $this->pattern = $pattern;
@@ -33,17 +38,12 @@ abstract class AbstractSingleRule extends AbstractRule
      *
      * @return \ViKon\Parser\rule\AbstractSingleRule
      */
-    public function embedInto($parentParentRuleName, Lexer $lexer)
-    {
-        if (is_array($this->pattern))
-        {
-            foreach ($this->pattern as $pattern)
-            {
+    public function embedInto($parentParentRuleName, Lexer $lexer) {
+        if (is_array($this->pattern)) {
+            foreach ($this->pattern as $pattern) {
                 $lexer->addSinglePattern($pattern, $parentParentRuleName, $this->name);
             }
-        }
-        else
-        {
+        } else {
             $lexer->addSinglePattern($this->pattern, $parentParentRuleName, $this->name);
         }
 
@@ -51,6 +51,8 @@ abstract class AbstractSingleRule extends AbstractRule
     }
 
     /**
+     * Parse token
+     *
      * @param string                  $content   matched token string
      * @param int                     $position  matched token position
      * @param int                     $state     matched state
@@ -58,10 +60,8 @@ abstract class AbstractSingleRule extends AbstractRule
      *
      * @throws \ViKon\Parser\rule\RuleException
      */
-    public function parseToken($content, $position, $state, TokenList $tokenList)
-    {
-        switch ($state)
-        {
+    public function parseToken($content, $position, $state, TokenList $tokenList) {
+        switch ($state) {
             case Lexer::STATE_SINGLE:
                 $this->handleSingleState($content, $position, $tokenList);
                 break;
@@ -72,12 +72,13 @@ abstract class AbstractSingleRule extends AbstractRule
     }
 
     /**
+     * Handle lexers single state
+     *
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleSingleState($content, $position, TokenList $tokenList)
-    {
+    protected function handleSingleState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name, $position);
     }
 }

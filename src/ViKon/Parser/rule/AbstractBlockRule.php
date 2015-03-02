@@ -7,8 +7,14 @@ use ViKon\Parser\AbstractSet;
 use ViKon\Parser\lexer\Lexer;
 use ViKon\Parser\TokenList;
 
-abstract class AbstractBlockRule extends AbstractRule
-{
+/**
+ * Class AbstractBlockRule
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\rule
+ */
+abstract class AbstractBlockRule extends AbstractRule {
     /** @var string|string[] */
     protected $entryPattern;
 
@@ -22,12 +28,11 @@ abstract class AbstractBlockRule extends AbstractRule
      * @param string|string[]           $exitPattern  exit pattern(s)
      * @param \ViKon\Parser\AbstractSet $set          rule set instance
      */
-    public function __construct($name, $order, $entryPattern, $exitPattern, AbstractSet $set)
-    {
+    public function __construct($name, $order, $entryPattern, $exitPattern, AbstractSet $set) {
         parent::__construct($name, $order, $set);
 
         $this->entryPattern = $entryPattern;
-        $this->exitPattern  = $exitPattern;
+        $this->exitPattern = $exitPattern;
     }
 
     /**
@@ -38,17 +43,12 @@ abstract class AbstractBlockRule extends AbstractRule
      *
      * @return $this
      */
-    public function embedInto($parentRuleNameName, Lexer $lexer)
-    {
-        if (is_array($this->entryPattern))
-        {
-            foreach ($this->entryPattern as $entryPattern)
-            {
+    public function embedInto($parentRuleNameName, Lexer $lexer) {
+        if (is_array($this->entryPattern)) {
+            foreach ($this->entryPattern as $entryPattern) {
                 $lexer->addEntryPattern($entryPattern, $parentRuleNameName, $this->name);
             }
-        }
-        else
-        {
+        } else {
             $lexer->addEntryPattern($this->entryPattern, $parentRuleNameName, $this->name);
         }
 
@@ -62,17 +62,12 @@ abstract class AbstractBlockRule extends AbstractRule
      *
      * @return $this
      */
-    public function finish(Lexer $lexer)
-    {
-        if (is_array($this->exitPattern))
-        {
-            foreach ($this->exitPattern as $exitPattern)
-            {
+    public function finish(Lexer $lexer) {
+        if (is_array($this->exitPattern)) {
+            foreach ($this->exitPattern as $exitPattern) {
                 $lexer->addExitPattern($exitPattern, $this->name);
             }
-        }
-        else
-        {
+        } else {
             $lexer->addExitPattern($this->exitPattern, $this->name);
         }
 
@@ -80,6 +75,8 @@ abstract class AbstractBlockRule extends AbstractRule
     }
 
     /**
+     * Parse token
+     *
      * @param string                  $content   matched token string
      * @param int                     $position  matched token position
      * @param int                     $state     matched state
@@ -87,10 +84,8 @@ abstract class AbstractBlockRule extends AbstractRule
      *
      * @throws \ViKon\Parser\rule\RuleException
      */
-    public function parseToken($content, $position, $state, TokenList $tokenList)
-    {
-        switch ($state)
-        {
+    public function parseToken($content, $position, $state, TokenList $tokenList) {
+        switch ($state) {
             case Lexer::STATE_ENTER:
                 $this->handleEntryState($content, $position, $tokenList);
                 break;
@@ -114,43 +109,47 @@ abstract class AbstractBlockRule extends AbstractRule
     }
 
     /**
+     * Handle lexers entry state
+     *
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleEntryState($content, $position, TokenList $tokenList)
-    {
+    protected function handleEntryState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name . '_open', $position);
     }
 
     /**
+     * Handle lexers unmatched state
+     *
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleUnmatchedState($content, $position, TokenList $tokenList)
-    {
+    protected function handleUnmatchedState($content, $position, TokenList $tokenList) {
         $this->parseContent($content, $tokenList);
     }
 
     /**
+     * Handle lexers exit state
+     *
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleExitState($content, $position, TokenList $tokenList)
-    {
+    protected function handleExitState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name . '_close', $position);
     }
 
     /**
+     * Handle lexers end state
+     *
      * @param string                  $content
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleEndState($content, $position, TokenList $tokenList)
-    {
+    protected function handleEndState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name, $position)
-                  ->set('content', $content);
+            ->set('content', $content);
     }
 }

@@ -3,8 +3,14 @@
 
 namespace ViKon\Parser;
 
-class Token
-{
+/**
+ * Class Token
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser
+ */
+class Token {
     /** @var string */
     private $name;
 
@@ -12,39 +18,35 @@ class Token
     private $position;
 
     /** @var mixed[] store key value pairs */
-    private $data = array();
+    private $data = [];
 
     /**
      * @param string $name     token name
      * @param int    $position token found at position
      */
-    public function __construct($name, $position)
-    {
-        $this->name     = strtolower($name);
+    public function __construct($name, $position) {
+        $this->name = strtolower($name);
         $this->position = $position;
     }
 
     /**
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
     /**
      * @return int
      */
-    public function getPosition()
-    {
+    public function getPosition() {
         return $this->position;
     }
 
     /**
      * @param int $position
      */
-    public function setPosition($position)
-    {
+    public function setPosition($position) {
         $this->position = $position;
     }
 
@@ -56,8 +58,7 @@ class Token
      *
      * @return $this
      */
-    public function set($key, $value)
-    {
+    public function set($key, $value) {
         $this->data[$key] = $value;
 
         return $this;
@@ -71,10 +72,8 @@ class Token
      *
      * @return mixed|null
      */
-    public function get($key, $default = null)
-    {
-        if ($this->exists($key))
-        {
+    public function get($key, $default = null) {
+        if ($this->exists($key)) {
             return $this->data[$key];
         }
 
@@ -88,8 +87,7 @@ class Token
      *
      * @return bool
      */
-    public function exists($key)
-    {
+    public function exists($key) {
         return array_key_exists($key, $this->data);
     }
 
@@ -100,10 +98,8 @@ class Token
      *
      * @return bool return TRUE if data existed and cleared
      */
-    public function clear($key)
-    {
-        if ($this->exists($key))
-        {
+    public function clear($key) {
+        if ($this->exists($key)) {
             unset($this->data[$key]);
 
             return true;
@@ -112,11 +108,14 @@ class Token
         return false;
     }
 
-    public function __toString()
-    {
+    /**
+     * Generate HTML content
+     *
+     * @return string
+     */
+    public function __toString() {
         $output = $output = '<h3>' . $this->name . '</h3>';
-        if (count($this->data) > 0)
-        {
+        if (count($this->data) > 0) {
             $output .= '<pre>' . htmlspecialchars(var_export($this->data, true)) . '</pre>';
         };
 

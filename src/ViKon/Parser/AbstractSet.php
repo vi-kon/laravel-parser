@@ -8,8 +8,14 @@ use ViKon\Parser\renderer\AbstractRuleRenderer;
 use ViKon\Parser\renderer\Renderer;
 use ViKon\Parser\rule\AbstractRule;
 
-abstract class AbstractSet
-{
+/**
+ * Class AbstractSet
+ *
+ * @author Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser
+ */
+abstract class AbstractSet {
     const CATEGORY_NONE = 0;
     const CATEGORY_BLOCK = 1;
     const CATEGORY_FORMAT = 2;
@@ -19,13 +25,13 @@ abstract class AbstractSet
     protected $startRule = null;
 
     /** @var \ViKon\Parser\rule\AbstractRule[] rules */
-    protected $rules = array();
+    protected $rules = [];
 
     /** @var \ViKon\Parser\renderer\AbstractRuleRenderer[] */
-    protected $ruleRenderers = array();
+    protected $ruleRenderers = [];
 
     /** @var \ViKon\Parser\rule\AbstractRule[][] rules by categories */
-    protected $categories = array();
+    protected $categories = [];
 
     /**
      * @param \ViKon\Parser\Parser                 $parser
@@ -34,21 +40,16 @@ abstract class AbstractSet
      *
      * @throws \ViKon\Parser\ParserException
      */
-    public function init(Parser $parser, Lexer $lexer, Renderer $renderer = null)
-    {
+    public function init(Parser $parser, Lexer $lexer, Renderer $renderer = null) {
         $parser->setLexer($lexer);
         $parser->setStartRule($this->startRule);
-        foreach ($this->rules as $rule)
-        {
+        foreach ($this->rules as $rule) {
             $parser->addRule($rule);
         }
-        if ($renderer !== null)
-        {
+        if ($renderer !== null) {
             $parser->setRenderer($renderer);
-            foreach ($this->ruleRenderers as $skin => $ruleRenderers)
-            {
-                foreach ($ruleRenderers as $ruleRenderer)
-                {
+            foreach ($this->ruleRenderers as $skin => $ruleRenderers) {
+                foreach ($ruleRenderers as $ruleRenderer) {
                     $renderer->addRuleRenderer($ruleRenderer, $skin);
                 }
             }
@@ -60,8 +61,7 @@ abstract class AbstractSet
     /**
      * @return \ViKon\Parser\rule\AbstractRule[]
      */
-    public function getRules()
-    {
+    public function getRules() {
         return $this->rules;
     }
 
@@ -72,14 +72,12 @@ abstract class AbstractSet
      *
      * @return \ViKon\Parser\rule\AbstractRule[]
      */
-    public function getRulesByCategory($name)
-    {
-        if (array_key_exists($name, $this->categories))
-        {
+    public function getRulesByCategory($name) {
+        if (array_key_exists($name, $this->categories)) {
             return $this->categories[$name];
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -90,16 +88,13 @@ abstract class AbstractSet
      *
      * @return rule\AbstractRule[]
      */
-    public function getRuleNamesByCategory($name, array $except = array())
-    {
+    public function getRuleNamesByCategory($name, array $except = []) {
         $rules = $this->getRulesByCategory($name);
 
-        foreach ($rules as $key => &$rule)
-        {
+        foreach ($rules as $key => &$rule) {
             $rule = $rule->getName();
 
-            if (in_array($rule, $except))
-            {
+            if (in_array($rule, $except)) {
                 unset($rules[$key]);
             }
         }
@@ -115,10 +110,9 @@ abstract class AbstractSet
      *
      * @return $this
      */
-    protected function setStartRule(AbstractRule $rule, $category)
-    {
-        $this->startRule               = $rule;
-        $this->rules[]                 = $rule;
+    protected function setStartRule(AbstractRule $rule, $category) {
+        $this->startRule = $rule;
+        $this->rules[] = $rule;
         $this->categories[$category][] = $rule;
 
         return $this;
@@ -132,9 +126,8 @@ abstract class AbstractSet
      *
      * @return $this
      */
-    protected function addRule(AbstractRule $rule, $category)
-    {
-        $this->rules[]                 = $rule;
+    protected function addRule(AbstractRule $rule, $category) {
+        $this->rules[] = $rule;
         $this->categories[$category][] = $rule;
 
         return $this;
@@ -143,8 +136,7 @@ abstract class AbstractSet
     /**
      * @param \ViKon\Parser\renderer\AbstractRuleRenderer $ruleRenderer rule renderer
      */
-    protected function addRuleRender(AbstractRuleRenderer $ruleRenderer)
-    {
+    protected function addRuleRender(AbstractRuleRenderer $ruleRenderer) {
         $this->ruleRenderers[$ruleRenderer->getSkin()][] = $ruleRenderer;
     }
 }

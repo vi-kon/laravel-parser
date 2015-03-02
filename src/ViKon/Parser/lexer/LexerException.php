@@ -3,7 +3,13 @@
 
 namespace ViKon\Parser;
 
-class LexerException extends \Exception
-{
+/**
+ * Class LexerException
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser
+ */
+class LexerException extends \Exception {
 
 }

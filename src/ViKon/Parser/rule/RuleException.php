@@ -3,7 +3,13 @@
 
 namespace ViKon\Parser\rule;
 
-class RuleException extends \Exception
-{
+/**
+ * Class RuleException
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\rule
+ */
+class RuleException extends \Exception {
 
 }

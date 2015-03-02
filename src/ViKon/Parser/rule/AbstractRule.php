@@ -7,8 +7,14 @@ use ViKon\Parser\lexer\Lexer;
 use ViKon\Parser\Parser;
 use ViKon\Parser\TokenList;
 
-abstract class AbstractRule
-{
+/**
+ * Class AbstractRule
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\rule
+ */
+abstract class AbstractRule {
     /** @var string */
     protected $name;
 
@@ -16,7 +22,7 @@ abstract class AbstractRule
     protected $order;
 
     /** @var string[] */
-    protected $acceptedRuleNames = array();
+    protected $acceptedRuleNames = [];
 
     /** @var \ViKon\Parser\AbstractSet */
     protected $set;
@@ -28,34 +34,36 @@ abstract class AbstractRule
      * @param int                       $order rule order no
      * @param \ViKon\Parser\AbstractSet $set   rule set instance
      */
-    public function __construct($name, $order, AbstractSet $set)
-    {
-        $this->name  = $name;
+    public function __construct($name, $order, AbstractSet $set) {
+        $this->name = $name;
         $this->order = $order;
-        $this->set   = $set;
+        $this->set = $set;
     }
 
     /**
+     * Get rule name
+     *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
     /**
+     * Get rule order no
+     *
      * @return int
      */
-    public function getOrder()
-    {
+    public function getOrder() {
         return $this->order;
     }
 
     /**
+     * Get rule set instance
+     *
      * @return \ViKon\Parser\AbstractSet
      */
-    public function getSet()
-    {
+    public function getSet() {
         return $this->set;
     }
 
@@ -66,8 +74,7 @@ abstract class AbstractRule
      *
      * @return $this
      */
-    public function prepare(Lexer $lexer)
-    {
+    public function prepare(Lexer $lexer) {
         return $this;
     }
 
@@ -79,8 +86,7 @@ abstract class AbstractRule
      *
      * @return $this
      */
-    public function embedInto($parentParentRuleName, Lexer $lexer)
-    {
+    public function embedInto($parentParentRuleName, Lexer $lexer) {
         return $this;
     }
 
@@ -91,8 +97,7 @@ abstract class AbstractRule
      *
      * @return $this
      */
-    public function finish(Lexer $lexer)
-    {
+    public function finish(Lexer $lexer) {
         return $this;
     }
 
@@ -103,8 +108,7 @@ abstract class AbstractRule
      *
      * @return $this
      */
-    public function finalize(TokenList $tokenList)
-    {
+    public function finalize(TokenList $tokenList) {
         return $this;
     }
 
@@ -115,19 +119,19 @@ abstract class AbstractRule
      *
      * @return bool TRUE if accepts named rule
      */
-    public function acceptRule($name)
-    {
+    public function acceptRule($name) {
         return in_array($name, $this->acceptedRuleNames);
     }
 
     /**
+     * Parse token
+     *
      * @param string                  $content   matched token string
      * @param int                     $position  matched token position
      * @param int                     $state     matched state
      * @param \ViKon\Parser\TokenList $tokenList token list
      */
-    public function parseToken($content, $position, $state, TokenList $tokenList)
-    {
+    public function parseToken($content, $position, $state, TokenList $tokenList) {
     }
 
     /**
@@ -138,10 +142,9 @@ abstract class AbstractRule
      *
      * @throws \ViKon\Parser\ParserException
      */
-    protected function parseContent($content, TokenList &$tokenList)
-    {
+    protected function parseContent($content, TokenList &$tokenList) {
         $parser = new Parser();
-        $lexer  = new Lexer();
+        $lexer = new Lexer();
 
         $this->set->init($parser, $lexer);
 
