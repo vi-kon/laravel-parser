@@ -1,6 +1,6 @@
 <?php
 
-namespace ViKon\Parser\lexer;
+namespace ViKon\Parser\Lexer;
 
 use ViKon\Parser\LexerException;
 use ViKon\Parser\Parser;
@@ -11,7 +11,7 @@ use ViKon\Parser\TokenList;
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\lexer
+ * @package ViKon\Parser\Lexer
  */
 class Lexer {
     const RULE_EXIT = '::exit';
@@ -24,13 +24,13 @@ class Lexer {
     const STATE_UNMATCHED = 4;
     const STATE_END = 5;
 
-    /** @var \ViKon\Parser\lexer\LexerPattern[] */
+    /** @var \ViKon\Parser\Lexer\LexerPattern[] */
     private $patterns = [];
 
     /** @var \ViKon\Parser\Parser|null */
     private $parser = null;
 
-    /** @var \ViKon\Parser\lexer\LexerStack */
+    /** @var \ViKon\Parser\Lexer\LexerStack */
     private $stack = [];
 
     /**
@@ -53,7 +53,7 @@ class Lexer {
      * @param string $ruleName      rule name
      * @param string $childRuleName child rule name (next rule)
      *
-     * @return \ViKon\Parser\lexer\Lexer
+     * @return \ViKon\Parser\Lexer\Lexer
      */
     public function addEntryPattern($pattern, $ruleName, $childRuleName) {
         return $this->addPattern($pattern, $ruleName, $childRuleName);
@@ -78,7 +78,7 @@ class Lexer {
      * @param string $ruleName      rule name
      * @param string $childRuleName child rule name (next rule)
      *
-     * @return \ViKon\Parser\lexer\Lexer
+     * @return \ViKon\Parser\Lexer\Lexer
      */
     public function addSinglePattern($pattern, $ruleName, $childRuleName) {
         return $this->addPattern($pattern, $ruleName, self::SINGLE_RULE_PREFIX . $childRuleName);
@@ -90,7 +90,7 @@ class Lexer {
      * @param string $pattern  regexp pattern
      * @param string $ruleName rule name
      *
-     * @return \ViKon\Parser\lexer\Lexer
+     * @return \ViKon\Parser\Lexer\Lexer
      */
     public function addSimplePattern($pattern, $ruleName) {
         return $this->addPattern($pattern, $ruleName);

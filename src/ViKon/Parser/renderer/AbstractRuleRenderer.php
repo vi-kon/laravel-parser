@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ViKon\Parser\renderer;
+namespace ViKon\Parser\Renderer;
 
 use ViKon\Parser\AbstractSet;
 
@@ -10,7 +10,7 @@ use ViKon\Parser\AbstractSet;
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\renderer
+ * @package ViKon\Parser\Renderer
  */
 abstract class AbstractRuleRenderer {
     /** @var \ViKon\Parser\AbstractSet */
@@ -40,7 +40,7 @@ abstract class AbstractRuleRenderer {
     /**
      * Register renderer
      *
-     * @param \ViKon\Parser\renderer\Renderer $renderer
+     * @param \ViKon\Parser\Renderer\Renderer $renderer
      *
      * @return mixed
      */

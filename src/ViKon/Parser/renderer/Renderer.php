@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ViKon\Parser\renderer;
+namespace ViKon\Parser\Renderer;
 
 use ViKon\Parser\TokenList;
 
@@ -10,10 +10,10 @@ use ViKon\Parser\TokenList;
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\renderer
+ * @package ViKon\Parser\Renderer
  */
 class Renderer {
-    /** @var \ViKon\Parser\renderer\AbstractRuleRenderer[] */
+    /** @var \ViKon\Parser\Renderer\AbstractRuleRenderer[] */
     protected $ruleRenderers = [];
 
     /** @var callback[][] */
@@ -22,7 +22,7 @@ class Renderer {
     /**
      * Add rule render
      *
-     * @param \ViKon\Parser\renderer\AbstractRuleRenderer $ruleRenderer rule renderer
+     * @param \ViKon\Parser\Renderer\AbstractRuleRenderer $ruleRenderer rule renderer
      */
     public function addRuleRenderer(AbstractRuleRenderer $ruleRenderer) {
         $this->ruleRenderers[$ruleRenderer->getSkin()][] = $ruleRenderer;

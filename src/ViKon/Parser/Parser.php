@@ -2,9 +2,9 @@
 
 namespace ViKon\Parser;
 
-use ViKon\Parser\lexer\Lexer;
-use ViKon\Parser\renderer\Renderer;
-use ViKon\Parser\rule\AbstractRule;
+use ViKon\Parser\Lexer\Lexer;
+use ViKon\Parser\Renderer\Renderer;
+use ViKon\Parser\Rule\AbstractRule;
 
 /**
  * Class Parser
@@ -14,20 +14,20 @@ use ViKon\Parser\rule\AbstractRule;
  * @package ViKon\Parser
  */
 class Parser {
-    /** @var \ViKon\Parser\rule\AbstractRule|null */
+    /** @var \ViKon\Parser\Rule\AbstractRule|null */
     private $startRule = null;
 
-    /** @var \ViKon\Parser\rule\AbstractRule[] */
+    /** @var \ViKon\Parser\Rule\AbstractRule[] */
     private $rules = [];
 
-    /** @var \ViKon\Parser\lexer\Lexer|null */
+    /** @var \ViKon\Parser\Lexer\Lexer|null */
     private $lexer = null;
 
-    /** @var \ViKon\Parser\renderer\Renderer|null */
+    /** @var \ViKon\Parser\Renderer\Renderer|null */
     private $renderer = null;
 
     /**
-     * @param \ViKon\Parser\lexer\Lexer $lexer
+     * @param \ViKon\Parser\Lexer\Lexer $lexer
      *
      * @return $this
      */
@@ -38,7 +38,7 @@ class Parser {
     }
 
     /**
-     * @param \ViKon\Parser\renderer\Renderer $renderer
+     * @param \ViKon\Parser\Renderer\Renderer $renderer
      */
     public function setRenderer(Renderer $renderer) {
         $this->renderer = $renderer;
@@ -47,7 +47,7 @@ class Parser {
     /**
      * Set start rule for parser
      *
-     * @param \ViKon\Parser\rule\AbstractRule $rule rule instance
+     * @param \ViKon\Parser\Rule\AbstractRule $rule rule instance
      *
      * @return $this
      */
@@ -60,7 +60,7 @@ class Parser {
     /**
      * Add rule to parser
      *
-     * @param \ViKon\Parser\rule\AbstractRule $rule rule instance
+     * @param \ViKon\Parser\Rule\AbstractRule $rule rule instance
      *
      * @throws \ViKon\Parser\ParserException throws if rule already exists with same name
      *
@@ -175,8 +175,8 @@ class Parser {
     /**
      * Sort rules by order ASC
      *
-     * @param \ViKon\Parser\rule\AbstractRule $a
-     * @param \ViKon\Parser\rule\AbstractRule $b
+     * @param \ViKon\Parser\Rule\AbstractRule $a
+     * @param \ViKon\Parser\Rule\AbstractRule $b
      *
      * @return int
      */

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace ViKon\Parser\lexer;
+namespace ViKon\Parser\Lexer;
 
 /**
  * Class LexerPattern
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\lexer
+ * @package ViKon\Parser\Lexer
  */
 class LexerPattern {
     /** @var string */

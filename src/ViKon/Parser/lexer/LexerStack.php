@@ -1,14 +1,14 @@
 <?php
 
 
-namespace ViKon\Parser\lexer;
+namespace ViKon\Parser\Lexer;
 
 /**
  * Class LexerStack
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\lexer
+ * @package ViKon\Parser\Lexer
  */
 class LexerStack {
     /** @var mixed[] */

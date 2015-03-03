@@ -1,23 +1,23 @@
 <?php
 
 
-namespace ViKon\Parser\rule;
+namespace ViKon\Parser\Rule;
 
 use ViKon\Parser\AbstractSet;
-use ViKon\Parser\lexer\Lexer;
+use ViKon\Parser\Lexer\Lexer;
 
 /**
  * Class AbstractFormatRule
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\rule
+ * @package ViKon\Parser\Rule
  */
 abstract class AbstractFormatRule extends AbstractBlockRule {
     /**
      * Prepare rule before connecting
      *
-     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
+     * @param \ViKon\Parser\Lexer\Lexer $lexer lexer instance
      *
      * @return $this
      */

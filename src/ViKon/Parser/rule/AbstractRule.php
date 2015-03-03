@@ -1,9 +1,9 @@
 <?php
 
-namespace ViKon\Parser\rule;
+namespace ViKon\Parser\Rule;
 
 use ViKon\Parser\AbstractSet;
-use ViKon\Parser\lexer\Lexer;
+use ViKon\Parser\Lexer\Lexer;
 use ViKon\Parser\Parser;
 use ViKon\Parser\TokenList;
 
@@ -12,7 +12,7 @@ use ViKon\Parser\TokenList;
  *
  * @author  Kovács Vince <vincekovacs@hotmail.com>
  *
- * @package ViKon\Parser\rule
+ * @package ViKon\Parser\Rule
  */
 abstract class AbstractRule {
     /** @var string */
@@ -70,7 +70,7 @@ abstract class AbstractRule {
     /**
      * Prepare rule before connecting
      *
-     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
+     * @param \ViKon\Parser\Lexer\Lexer $lexer lexer instance
      *
      * @return $this
      */
@@ -82,7 +82,7 @@ abstract class AbstractRule {
      * Embed rule into parent rule
      *
      * @param string                    $parentParentRuleName parent rule name
-     * @param \ViKon\Parser\lexer\Lexer $lexer                lexer instance
+     * @param \ViKon\Parser\Lexer\Lexer $lexer                lexer instance
      *
      * @return $this
      */
@@ -93,7 +93,7 @@ abstract class AbstractRule {
     /**
      * Finish rule after connecting
      *
-     * @param \ViKon\Parser\lexer\Lexer $lexer lexer instance
+     * @param \ViKon\Parser\Lexer\Lexer $lexer lexer instance
      *
      * @return $this
      */
