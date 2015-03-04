@@ -20,22 +20,22 @@ class Renderer {
     protected $tokenRenderers = [];
 
     /**
-     * Add rule render
+     * Register rule render
      *
      * @param \ViKon\Parser\Renderer\AbstractRuleRenderer $ruleRenderer rule renderer
      */
-    public function addRuleRenderer(AbstractRuleRenderer $ruleRenderer) {
+    public function registerRuleRenderer(AbstractRuleRenderer $ruleRenderer) {
         $this->ruleRenderers[$ruleRenderer->getSkin()][] = $ruleRenderer;
     }
 
     /**
-     * Set token renderer
+     * Register token renderer
      *
      * @param string   $tokenName token name
      * @param callable $callback  callback
      * @param string   $skin      renderer skin
      */
-    public function setTokenRenderer($tokenName, $callback, $skin = 'default') {
+    public function registerTokenRenderer($tokenName, $callback, $skin = 'default') {
         $this->tokenRenderers[$skin][$tokenName] = $callback;
     }
 

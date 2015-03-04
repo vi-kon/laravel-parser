@@ -50,7 +50,7 @@ abstract class AbstractSet {
             $parser->setRenderer($renderer);
             foreach ($this->ruleRenderers as $skin => $ruleRenderers) {
                 foreach ($ruleRenderers as $ruleRenderer) {
-                    $renderer->addRuleRenderer($ruleRenderer, $skin);
+                    $renderer->registerRuleRenderer($ruleRenderer, $skin);
                 }
             }
         }
