@@ -181,7 +181,7 @@ class Parser {
      * @return int
      */
     protected function sortRulesByOrder(AbstractRule $a, AbstractRule $b) {
-        if ($a->getOrder() == $b->getOrder()) {
+        if ($a->getOrder() === $b->getOrder()) {
             return 0;
         }
 
