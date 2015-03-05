@@ -15,6 +15,9 @@ use ViKon\Parser\TokenList;
  * @package ViKon\Parser\Rule
  */
 abstract class AbstractBlockRule extends AbstractRule {
+    const OPEN = '_open';
+    const CLOSE = '_close';
+
     /** @var string|string[] */
     protected $entryPattern;
 
@@ -116,7 +119,7 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function handleEntryState($content, $position, TokenList $tokenList) {
-        $tokenList->addToken($this->name . '_open', $position);
+        $tokenList->addToken($this->name . self::OPEN, $position);
     }
 
     /**
@@ -138,7 +141,7 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function handleExitState($content, $position, TokenList $tokenList) {
-        $tokenList->addToken($this->name . '_close', $position);
+        $tokenList->addToken($this->name . self::CLOSE, $position);
     }
 
     /**
