@@ -25,7 +25,7 @@ class Token {
      * @param int    $position token found at position
      */
     public function __construct($name, $position) {
-        $this->name = strtolower($name);
+        $this->name = $name;
         $this->position = $position;
     }
 
