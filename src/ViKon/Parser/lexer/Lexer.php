@@ -195,7 +195,7 @@ class Lexer {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function callParser($content, $position, $state, TokenList $tokenList) {
-        if ($content === '') {
+        if ($content === '' && ($state === self::STATE_MATCHED || $state === self::STATE_UNMATCHED)) {
             return;
         }
 
