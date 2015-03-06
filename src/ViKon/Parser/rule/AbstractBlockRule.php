@@ -15,8 +15,8 @@ use ViKon\Parser\TokenList;
  * @package ViKon\Parser\Rule
  */
 abstract class AbstractBlockRule extends AbstractRule {
-    const OPEN = '_open';
-    const CLOSE = '_close';
+    const OPEN = '_OPEN';
+    const CLOSE = '_CLOSE';
 
     /** @var string|string[] */
     protected $entryPattern;
