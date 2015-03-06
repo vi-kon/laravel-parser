@@ -10,7 +10,7 @@ namespace ViKon\Parser;
  *
  * @package ViKon\Parser
  */
-class TokenList {
+class TokenList implements \Countable {
 
     /** @var \ViKon\Parser\Token[] */
     protected $tokens = [];
@@ -109,7 +109,7 @@ class TokenList {
      *
      * @return int
      */
-    public function size() {
+    public function count() {
         return count($this->tokens);
     }
 
