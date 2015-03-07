@@ -130,9 +130,25 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function handleUnmatchedState($content, $position, TokenList $tokenList) {
-        if (!empty($content)) {
-            $this->parseContent($content, $tokenList);
+        if (empty($content)) {
+            return;
         }
+
+        $contentTokenList = $this->parseContent($content);
+
+        $startRule = $this->set->getStartRule();
+
+        for ($i = 0; $i < count($contentTokenList); $i++) {
+            if ($contentTokenList->getTokenAt($i)->getName() === $this->name) {
+                $token = $contentTokenList->getTokenAt($i);
+                $contentTokenList->removeTokenAt($i);
+                $contentTokenList->insertTokenAt($startRule->getName(), $token->getPosition(), $i)
+                    ->set('content', $token->get('content', ''));
+            }
+        }
+
+        $tokenList->merge($contentTokenList);
+
     }
 
     /**
@@ -142,7 +158,8 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleExitState($content, $position, TokenList $tokenList) {
+    protected
+    function handleExitState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name . self::CLOSE, $position);
     }
 
@@ -153,7 +170,8 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected function handleEndState($content, $position, TokenList $tokenList) {
+    protected
+    function handleEndState($content, $position, TokenList $tokenList) {
         if (!empty($content)) {
             $tokenList->addToken($this->name, $position)
                 ->set('content', $content);
