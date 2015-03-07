@@ -195,10 +195,6 @@ class Lexer {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function callParser($content, $position, $state, TokenList $tokenList) {
-        if ($content === '' && ($state === self::STATE_MATCHED || $state === self::STATE_UNMATCHED)) {
-            return;
-        }
-
         $ruleName = $this->stack->top();
 
         $this->parser->parseToken($ruleName, $content, $position, $state, $tokenList);

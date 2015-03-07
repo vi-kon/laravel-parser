@@ -130,7 +130,9 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function handleUnmatchedState($content, $position, TokenList $tokenList) {
-        $this->parseContent($content, $tokenList);
+        if (!empty($content)) {
+            $this->parseContent($content, $tokenList);
+        }
     }
 
     /**
@@ -152,7 +154,9 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param \ViKon\Parser\TokenList $tokenList
      */
     protected function handleEndState($content, $position, TokenList $tokenList) {
-        $tokenList->addToken($this->name, $position)
-            ->set('content', $content);
+        if (!empty($content)) {
+            $tokenList->addToken($this->name, $position)
+                ->set('content', $content);
+        }
     }
 }
