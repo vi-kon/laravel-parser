@@ -2,6 +2,7 @@
 
 
 namespace ViKon\Parser;
+use ViKon\Parser\Rule\AbstractBlockRule;
 
 /**
  * Class TokenList
@@ -30,14 +31,15 @@ class TokenList implements \Countable {
         $token = new Token($name, $position);
         $this->tokens[] = $token;
 
+        // Autoclose opened tokens
         switch (substr($name, -4)) {
-            case 'open':
+            case AbstractBlockRule::OPEN:
                 $this->openedTokens[] = substr($name, 0, -5);
                 break;
-            case 'close':
+            case AbstractBlockRule::CLOSE:
                 while (count($this->openedTokens) > 0) {
                     $lastOpenToken = array_pop($this->openedTokens);
-                    $this->tokens[] = new Token($lastOpenToken . '_close', $position);
+                    $this->tokens[] = new Token($lastOpenToken . AbstractBlockRule::CLOSE, $position);
                     if ($lastOpenToken == substr($name, 0, -5)) {
                         break;
                     }
@@ -225,7 +227,7 @@ class TokenList implements \Countable {
         $lastToken = $this->last();
         while (count($this->openedTokens) > 0) {
             $lastOpenToken = array_pop($this->openedTokens);
-            $this->tokens[] = new Token($lastOpenToken . '_close', $lastToken->getPosition());
+            $this->tokens[] = new Token($lastOpenToken . AbstractBlockRule::CLOSE, $lastToken->getPosition());
         }
     }
 }
