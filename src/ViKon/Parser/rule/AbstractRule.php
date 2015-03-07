@@ -105,10 +105,11 @@ abstract class AbstractRule {
      * Run after lexer finish tokenization
      *
      * @param TokenList $tokenList tokenization result
+     * @param bool      $recursive indicates if parse called inside rule during tokenization
      *
      * @return $this
      */
-    public function finalize(TokenList $tokenList) {
+    public function finalize(TokenList $tokenList, $recursive) {
         return $this;
     }
 
@@ -137,12 +138,14 @@ abstract class AbstractRule {
     /**
      * Parse token match content
      *
-     * @param string    $content
-     * @param TokenList $tokenList
+     * @param string         $content   content to parse
+     * @param TokenList|null $tokenList already initialized token list
+     *
+     * @return \ViKon\Parser\TokenList
      *
      * @throws \ViKon\Parser\ParserException
      */
-    protected function parseContent($content, TokenList &$tokenList) {
+    protected function parseContent($content, TokenList $tokenList = null) {
         $parser = new Parser();
         $lexer = new Lexer();
 
@@ -150,5 +153,7 @@ abstract class AbstractRule {
 
         $parser->setStartRule($this);
         $tokenList = $parser->parse($content, $tokenList, true);
+
+        return $tokenList;
     }
 }
