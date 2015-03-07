@@ -49,11 +49,18 @@ class TokenList implements \Countable {
     }
 
     /**
-     * @param int $index index of token
+     * Get token at given position
+     *
+     * @param int $index token index, if index is negative get token from behind (-1 is last element)
      *
      * @return \ViKon\Parser\Token
      */
     public function getTokenAt($index) {
+        // Get token from behind
+        if ($index < 0) {
+            $index = count($this->tokens) + $index;
+        }
+
         return $this->tokens[$index];
     }
 
@@ -75,9 +82,13 @@ class TokenList implements \Countable {
     /**
      * Remove token at specific index position
      *
-     * @param int $index
+     * @param int $index token index, if index is negative get token from behind (-1 is last element)
      */
     public function removeTokenAt($index) {
+        // Remove token from behind
+        if ($index < 0) {
+            $index = count($this->tokens) + $index;
+        }
         array_splice($this->tokens, $index, 1);
     }
 
@@ -114,9 +125,23 @@ class TokenList implements \Countable {
     }
 
     /**
-     * Get last token
+     * Get first token
      *
      * @return \ViKon\Parser\Token|null
+     */
+    public function first() {
+        if (count($this->tokens) > 0) {
+            return reset($this->tokens);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get last token
+     *
+     *
+     * @return null|\ViKon\Parser\Token
      */
     public function last() {
         if (count($this->tokens) > 0) {
