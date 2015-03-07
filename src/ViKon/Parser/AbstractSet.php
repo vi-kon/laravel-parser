@@ -103,6 +103,15 @@ abstract class AbstractSet {
     }
 
     /**
+     * Get start rule
+     *
+     * @return null|\ViKon\Parser\Rule\AbstractRule
+     */
+    public function getStartRule() {
+        return $this->startRule;
+    }
+
+    /**
      * Set start Rule
      *
      * @param \ViKon\Parser\Rule\AbstractRule $rule     Rule
