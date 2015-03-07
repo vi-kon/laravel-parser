@@ -194,7 +194,7 @@ class TokenList implements \Countable {
      */
     public function merge(TokenList $tokenList) {
         $tokenList->closeOpenTokens();
-        $lastTokenPosition = $this->last()
+        $lastTokenPosition = $this->last() === null ? 0 : $this->last()
             ->getPosition();
         foreach ($tokenList->getTokens() as $token) {
             $token->setPosition($token->getPosition() + $lastTokenPosition);
