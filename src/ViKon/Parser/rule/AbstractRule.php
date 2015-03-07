@@ -138,21 +138,21 @@ abstract class AbstractRule {
     /**
      * Parse token match content
      *
-     * @param string         $content   content to parse
-     * @param TokenList|null $tokenList already initialized token list
+     * @param string         $content     content to parse
+     * @param TokenList|null $tokenList   already initialized token list
+     * @param bool           $independent independent parsing (mark as not recursive parsing)
      *
      * @return \ViKon\Parser\TokenList
-     *
      * @throws \ViKon\Parser\ParserException
      */
-    protected function parseContent($content, TokenList $tokenList = null) {
+    protected function parseContent($content, TokenList $tokenList = null, $independent = false) {
         $parser = new Parser();
         $lexer = new Lexer();
 
         $this->set->init($parser, $lexer);
 
         $parser->setStartRule($this);
-        $tokenList = $parser->parse($content, $tokenList, true);
+        $tokenList = $parser->parse($content, $tokenList, !$independent);
 
         return $tokenList;
     }
