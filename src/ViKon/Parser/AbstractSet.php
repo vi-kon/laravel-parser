@@ -112,9 +112,9 @@ abstract class AbstractSet {
     }
 
     /**
-     * Set start Rule
+     * Set start rule
      *
-     * @param \ViKon\Parser\Rule\AbstractRule $rule     Rule
+     * @param \ViKon\Parser\Rule\AbstractRule $rule     rule
      * @param int                             $category category identifier
      *
      * @return $this
@@ -128,9 +128,9 @@ abstract class AbstractSet {
     }
 
     /**
-     * Add Rule
+     * Add rule
      *
-     * @param \ViKon\Parser\Rule\AbstractRule $rule     Rule
+     * @param \ViKon\Parser\Rule\AbstractRule $rule     rule
      * @param int                             $category category identifier
      *
      * @return $this
@@ -143,9 +143,11 @@ abstract class AbstractSet {
     }
 
     /**
-     * @param \ViKon\Parser\Renderer\AbstractRuleRenderer $ruleRenderer Rule renderer
+     * Add rule renderer
+     *
+     * @param \ViKon\Parser\Renderer\AbstractRuleRenderer $ruleRenderer rule renderer
      */
-    protected function addRuleRender(AbstractRuleRenderer $ruleRenderer) {
+    protected function addRuleRenderer(AbstractRuleRenderer $ruleRenderer) {
         $this->ruleRenderers[$ruleRenderer->getSkin()][] = $ruleRenderer;
     }
 }
