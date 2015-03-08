@@ -3,6 +3,7 @@
 
 namespace ViKon\Parser\Renderer;
 
+use ViKon\Parser\ParserException;
 use ViKon\Parser\TokenList;
 
 /**
@@ -45,11 +46,13 @@ class Renderer {
      * @param \ViKon\Parser\TokenList $tokenList parsed token list
      * @param string                  $skin      renderer skin
      *
-     * @return string|bool FALSE on failure otherwise output
+     * @return bool|string FALSE on failure otherwise output
+     *
+     * @throws \ViKon\Parser\ParserException
      */
     public function render(TokenList $tokenList, $skin = 'default') {
         if (!array_key_exists($skin, $this->ruleRenderers)) {
-            return false;
+            throw new ParserException('Skin ' . $skin . ' not found');
         }
 
         if (!array_key_exists($skin, $this->tokenRenderers)) {
