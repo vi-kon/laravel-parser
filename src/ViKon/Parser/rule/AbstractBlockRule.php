@@ -3,7 +3,6 @@
 
 namespace ViKon\Parser\Rule;
 
-use ViKon\Parser\AbstractSet;
 use ViKon\Parser\Lexer\Lexer;
 use ViKon\Parser\TokenList;
 
@@ -25,14 +24,13 @@ abstract class AbstractBlockRule extends AbstractRule {
     protected $exitPattern;
 
     /**
-     * @param string                    $name         rule name
-     * @param int                       $order        order number
-     * @param string|string[]           $entryPattern entry pattern(s)
-     * @param string|string[]           $exitPattern  exit pattern(s)
-     * @param \ViKon\Parser\AbstractSet $set          rule set instance
+     * @param string          $name         rule name
+     * @param int             $order        order number
+     * @param string|string[] $entryPattern entry pattern(s)
+     * @param string|string[] $exitPattern  exit pattern(s)
      */
-    public function __construct($name, $order, $entryPattern, $exitPattern, AbstractSet $set) {
-        parent::__construct($name, $order, $set);
+    public function __construct($name, $order, $entryPattern, $exitPattern) {
+        parent::__construct($name, $order);
 
         $this->entryPattern = $entryPattern;
         $this->exitPattern = $exitPattern;
@@ -41,18 +39,18 @@ abstract class AbstractBlockRule extends AbstractRule {
     /**
      * Embed rule into parent rule
      *
-     * @param string                    $parentRuleNameName parent rule name
-     * @param \ViKon\Parser\Lexer\Lexer $lexer              lexer instance
+     * @param string                    $ruleNameName parent rule name
+     * @param \ViKon\Parser\Lexer\Lexer $lexer        lexer instance
      *
      * @return $this
      */
-    public function embedInto($parentRuleNameName, Lexer $lexer) {
+    public function embedInto($ruleNameName, Lexer $lexer) {
         if (is_array($this->entryPattern)) {
             foreach ($this->entryPattern as $entryPattern) {
-                $lexer->addEntryPattern($entryPattern, $parentRuleNameName, $this->name);
+                $lexer->addEntryPattern($entryPattern, $ruleNameName, $this->name);
             }
         } else {
-            $lexer->addEntryPattern($this->entryPattern, $parentRuleNameName, $this->name);
+            $lexer->addEntryPattern($this->entryPattern, $ruleNameName, $this->name);
         }
 
         return $this;
@@ -158,8 +156,7 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected
-    function handleExitState($content, $position, TokenList $tokenList) {
+    protected function handleExitState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name . self::CLOSE, $position);
     }
 
@@ -170,8 +167,7 @@ abstract class AbstractBlockRule extends AbstractRule {
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected
-    function handleEndState($content, $position, TokenList $tokenList) {
+    protected function handleEndState($content, $position, TokenList $tokenList) {
         if (!empty($content)) {
             $tokenList->addToken($this->name, $position)
                 ->set('content', $content);

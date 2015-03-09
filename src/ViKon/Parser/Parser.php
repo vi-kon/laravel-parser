@@ -39,9 +39,13 @@ class Parser {
 
     /**
      * @param \ViKon\Parser\Renderer\Renderer $renderer
+     *
+     * @return $this
      */
     public function setRenderer(Renderer $renderer) {
         $this->renderer = $renderer;
+
+        return $this;
     }
 
     /**

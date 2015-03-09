@@ -14,7 +14,7 @@ use ViKon\Parser\TokenList;
  * @package ViKon\Parser\Renderer
  */
 class Renderer {
-    /** @var \ViKon\Parser\Renderer\AbstractRuleRenderer[] */
+    /** @var \ViKon\Parser\Renderer\AbstractRenderer[][] */
     protected $ruleRenderers = [];
 
     /** @var callback[][] */
@@ -23,10 +23,11 @@ class Renderer {
     /**
      * Register rule render
      *
-     * @param \ViKon\Parser\Renderer\AbstractRuleRenderer $ruleRenderer rule renderer
+     * @param \ViKon\Parser\Renderer\AbstractRenderer $ruleRenderer renderer
+     * @param string                                  $skin         renderer skin
      */
-    public function registerRuleRenderer(AbstractRuleRenderer $ruleRenderer) {
-        $this->ruleRenderers[$ruleRenderer->getSkin()][] = $ruleRenderer;
+    public function registerRenderer(AbstractRenderer $ruleRenderer, $skin = 'default') {
+        $this->ruleRenderers[$skin][] = $ruleRenderer;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace ViKon\Parser\Rule;
 
-use ViKon\Parser\AbstractSet;
 use ViKon\Parser\Lexer\Lexer;
 use ViKon\Parser\Parser;
 use ViKon\Parser\TokenList;
@@ -24,20 +23,29 @@ abstract class AbstractRule {
     /** @var string[] */
     protected $acceptedRuleNames = [];
 
-    /** @var \ViKon\Parser\AbstractSet */
+    /** @var \ViKon\Parser\Rule\AbstractRuleSet */
     protected $set;
 
     /**
      * Create new rule
      *
-     * @param string                    $name  rule name
-     * @param int                       $order rule order no
-     * @param \ViKon\Parser\AbstractSet $set   rule set instance
+     * @param string $name  rule name
+     * @param int    $order rule order no
      */
-    public function __construct($name, $order, AbstractSet $set) {
+    public function __construct($name, $order) {
         $this->name = $name;
         $this->order = $order;
+    }
+
+    /**
+     * @param \ViKon\Parser\Rule\AbstractRuleSet $set
+     *
+     * @return $this
+     */
+    public function setRuleSet(AbstractRuleSet $set) {
         $this->set = $set;
+
+        return $this;
     }
 
     /**
@@ -61,7 +69,7 @@ abstract class AbstractRule {
     /**
      * Get rule set instance
      *
-     * @return \ViKon\Parser\AbstractSet
+     * @return \ViKon\Parser\Rule\AbstractRuleSet
      */
     public function getSet() {
         return $this->set;
@@ -81,12 +89,12 @@ abstract class AbstractRule {
     /**
      * Embed rule into parent rule
      *
-     * @param string                    $parentParentRuleName parent rule name
-     * @param \ViKon\Parser\Lexer\Lexer $lexer                lexer instance
+     * @param string                    $parentRuleName parent rule name
+     * @param \ViKon\Parser\Lexer\Lexer $lexer          lexer instance
      *
      * @return $this
      */
-    public function embedInto($parentParentRuleName, Lexer $lexer) {
+    public function embedInto($parentRuleName, Lexer $lexer) {
         return $this;
     }
 
