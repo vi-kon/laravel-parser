@@ -86,7 +86,7 @@ abstract class AbstractRuleSet {
 
         $ruleNames = [];
 
-        foreach ($this->rules as $rule) {
+        foreach ($this->categories[$name] as $rule) {
             if (!in_array($rule->getName(), $except)) {
                 $ruleNames[] = $rule->getName();
             }
