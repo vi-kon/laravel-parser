@@ -36,8 +36,7 @@ abstract class AbstractSingleRule extends AbstractRule {
      *
      * @return \ViKon\Parser\Rule\AbstractSingleRule
      */
-    public
-    function embedInto($parentRuleName, Lexer $lexer) {
+    public function embedInto($parentRuleName, Lexer $lexer) {
         if (is_array($this->pattern)) {
             foreach ($this->pattern as $pattern) {
                 $lexer->addSinglePattern($pattern, $parentRuleName, $this->name);
@@ -59,8 +58,7 @@ abstract class AbstractSingleRule extends AbstractRule {
      *
      * @throws \ViKon\Parser\Rule\RuleException
      */
-    public
-    function parseToken($content, $position, $state, TokenList $tokenList) {
+    public function parseToken($content, $position, $state, TokenList $tokenList) {
         switch ($state) {
             case Lexer::STATE_SINGLE:
                 $this->handleSingleState($content, $position, $tokenList);
@@ -78,8 +76,7 @@ abstract class AbstractSingleRule extends AbstractRule {
      * @param int                     $position
      * @param \ViKon\Parser\TokenList $tokenList
      */
-    protected
-    function handleSingleState($content, $position, TokenList $tokenList) {
+    protected function handleSingleState($content, $position, TokenList $tokenList) {
         $tokenList->addToken($this->name, $position);
     }
 }
