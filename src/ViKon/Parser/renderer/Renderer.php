@@ -1,37 +1,43 @@
 <?php
 
 
-namespace ViKon\Parser\renderer;
+namespace ViKon\Parser\Renderer;
 
+use ViKon\Parser\ParserException;
 use ViKon\Parser\TokenList;
 
-class Renderer
-{
-    /** @var \ViKon\Parser\renderer\AbstractRuleRenderer[] */
-    protected $ruleRenderers = array();
+/**
+ * Class Renderer
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\Renderer
+ */
+class Renderer {
+    /** @var \ViKon\Parser\Renderer\AbstractRenderer[][] */
+    protected $ruleRenderers = [];
 
     /** @var callback[][] */
-    protected $tokenRenderers = array();
+    protected $tokenRenderers = [];
 
     /**
-     * Add rule render
+     * Register rule render
      *
-     * @param \ViKon\Parser\renderer\AbstractRuleRenderer $ruleRenderer rule renderer
+     * @param \ViKon\Parser\Renderer\AbstractRenderer $ruleRenderer renderer
+     * @param string                                  $skin         renderer skin
      */
-    public function addRuleRenderer(AbstractRuleRenderer $ruleRenderer)
-    {
-        $this->ruleRenderers[$ruleRenderer->getSkin()][] = $ruleRenderer;
+    public function registerRenderer(AbstractRenderer $ruleRenderer, $skin = 'default') {
+        $this->ruleRenderers[$skin][] = $ruleRenderer;
     }
 
     /**
-     * Set token renderer
+     * Register token renderer
      *
      * @param string   $tokenName token name
      * @param callable $callback  callback
      * @param string   $skin      renderer skin
      */
-    public function setTokenRenderer($tokenName, $callback, $skin = 'default')
-    {
+    public function registerTokenRenderer($tokenName, $callback, $skin = 'default') {
         $this->tokenRenderers[$skin][$tokenName] = $callback;
     }
 
@@ -41,39 +47,33 @@ class Renderer
      * @param \ViKon\Parser\TokenList $tokenList parsed token list
      * @param string                  $skin      renderer skin
      *
-     * @return string|bool FALSE on failure otherwise output
+     * @return bool|string FALSE on failure otherwise output
+     *
+     * @throws \ViKon\Parser\ParserException
      */
-    public function render(TokenList $tokenList, $skin = 'default')
-    {
-        if (!array_key_exists($skin, $this->ruleRenderers))
-        {
-            return false;
+    public function render(TokenList $tokenList, $skin = 'default') {
+        if (!array_key_exists($skin, $this->ruleRenderers)) {
+            throw new ParserException('Skin ' . $skin . ' not found');
         }
 
-        if (!array_key_exists($skin, $this->tokenRenderers))
-        {
-            $this->tokenRenderers[$skin] = array();
-            foreach ($this->ruleRenderers[$skin] as $ruleRenderer)
-            {
+        if (!array_key_exists($skin, $this->tokenRenderers)) {
+            $this->tokenRenderers[$skin] = [];
+            foreach ($this->ruleRenderers[$skin] as $ruleRenderer) {
                 $ruleRenderer->register($this);
             }
         }
 
-        \Event::fire('vikon.parser.before.render', array($tokenList));
+        \Event::fire('vikon.parser.before.render', [$tokenList]);
 
         $output = '';
 
-        foreach ($tokenList->getTokens() as $token)
-        {
-            \Event::fire('vikon.parser.token.render.' . $token->getName(), array($token));
+        foreach ($tokenList->getTokens() as $token) {
+            \Event::fire('vikon.parser.token.render.' . $token->getName(), [$token, $tokenList]);
 
-            if (array_key_exists($token->getName(), $this->tokenRenderers[$skin]))
-            {
+            if (array_key_exists($token->getName(), $this->tokenRenderers[$skin])) {
                 $output .= $this->tokenRenderers[$skin][$token->getName()]($token, $tokenList);
-            }
-            else
-            {
-                $output .= (string) $token;
+            } else {
+                $output .= (string)$token;
             }
         }
 

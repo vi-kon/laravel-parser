@@ -3,7 +3,13 @@
 
 namespace ViKon\Parser;
 
-class ParserException extends \Exception
-{
+/**
+ * Class ParserException
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser
+ */
+class ParserException extends \Exception {
 
 }

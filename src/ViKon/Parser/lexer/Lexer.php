@@ -1,13 +1,19 @@
 <?php
 
-namespace ViKon\Parser\lexer;
+namespace ViKon\Parser\Lexer;
 
 use ViKon\Parser\LexerException;
 use ViKon\Parser\Parser;
 use ViKon\Parser\TokenList;
 
-class Lexer
-{
+/**
+ * Class Lexer
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\Lexer
+ */
+class Lexer {
     const RULE_EXIT = '::exit';
     const SINGLE_RULE_PREFIX = ':';
 
@@ -18,14 +24,14 @@ class Lexer
     const STATE_UNMATCHED = 4;
     const STATE_END = 5;
 
-    /** @var \ViKon\Parser\lexer\LexerPattern[] */
-    private $patterns = array();
+    /** @var \ViKon\Parser\Lexer\LexerPattern[] */
+    private $patterns = [];
 
     /** @var \ViKon\Parser\Parser|null */
     private $parser = null;
 
-    /** @var \ViKon\Parser\lexer\LexerStack */
-    private $stack = array();
+    /** @var \ViKon\Parser\Lexer\LexerStack */
+    private $stack = [];
 
     /**
      * Set parser
@@ -34,8 +40,7 @@ class Lexer
      *
      * @return $this
      */
-    public function setParser(Parser $parser)
-    {
+    public function setParser(Parser $parser) {
         $this->parser = $parser;
 
         return $this;
@@ -48,10 +53,9 @@ class Lexer
      * @param string $ruleName      rule name
      * @param string $childRuleName child rule name (next rule)
      *
-     * @return \ViKon\Parser\lexer\Lexer
+     * @return \ViKon\Parser\Lexer\Lexer
      */
-    public function addEntryPattern($pattern, $ruleName, $childRuleName)
-    {
+    public function addEntryPattern($pattern, $ruleName, $childRuleName) {
         return $this->addPattern($pattern, $ruleName, $childRuleName);
     }
 
@@ -63,8 +67,7 @@ class Lexer
      *
      * @return $this
      */
-    public function addExitPattern($pattern, $ruleName)
-    {
+    public function addExitPattern($pattern, $ruleName) {
         return $this->addPattern($pattern, $ruleName, self::RULE_EXIT);
     }
 
@@ -75,10 +78,9 @@ class Lexer
      * @param string $ruleName      rule name
      * @param string $childRuleName child rule name (next rule)
      *
-     * @return \ViKon\Parser\lexer\Lexer
+     * @return \ViKon\Parser\Lexer\Lexer
      */
-    public function addSinglePattern($pattern, $ruleName, $childRuleName)
-    {
+    public function addSinglePattern($pattern, $ruleName, $childRuleName) {
         return $this->addPattern($pattern, $ruleName, self::SINGLE_RULE_PREFIX . $childRuleName);
     }
 
@@ -88,31 +90,10 @@ class Lexer
      * @param string $pattern  regexp pattern
      * @param string $ruleName rule name
      *
-     * @return \ViKon\Parser\lexer\Lexer
+     * @return \ViKon\Parser\Lexer\Lexer
      */
-    public function addSimplePattern($pattern, $ruleName)
-    {
+    public function addSimplePattern($pattern, $ruleName) {
         return $this->addPattern($pattern, $ruleName);
-    }
-
-    /**
-     * Add pattern to rule patterns
-     *
-     * @param string      $pattern       regex pattern
-     * @param string      $ruleName      rule name
-     * @param string|null $childRuleName child rule name
-     *
-     * @return $this
-     */
-    protected function addPattern($pattern, $ruleName, $childRuleName = null)
-    {
-        if (!isset($this->patterns[$ruleName]))
-        {
-            $this->patterns[$ruleName] = new LexerPattern($ruleName);
-        }
-        $this->patterns[$ruleName]->addPattern($pattern, $childRuleName);
-
-        return $this;
     }
 
     /**
@@ -123,20 +104,17 @@ class Lexer
      * @throws \ViKon\Parser\LexerException
      * @return \ViKon\Parser\TokenList
      */
-    public function tokenize($text, $startRuleName, TokenList $tokenList = null)
-    {
-        if ($tokenList === null)
-        {
+    public function tokenize($text, $startRuleName, TokenList $tokenList = null) {
+        if ($tokenList === null) {
             $tokenList = new TokenList();
         }
 
         $currentPosition = 0;
-        $initialLength   = strlen($text);
+        $initialLength = strlen($text);
 
         $this->stack = new LexerStack($startRuleName);
 
-        while (is_array($parsed = $this->reduce($text)))
-        {
+        while (is_array($parsed = $this->reduce($text))) {
             list($unmatched, $matched, $ruleName) = $parsed;
 
             $remainingLength = strlen($text);
@@ -144,31 +122,22 @@ class Lexer
 
             $this->callParser($unmatched, $currentPosition, self::STATE_UNMATCHED, $tokenList);
 
-            if ($ruleName === self::RULE_EXIT)
-            {
+            if ($ruleName === self::RULE_EXIT) {
                 $this->callParser($matched, $matchedPosition, self::STATE_EXIT, $tokenList);
-                if (!$this->stack->pop())
-                {
+                if (!$this->stack->pop()) {
                     throw new LexerException('Stack is empty after pop');
                 }
-            }
-            else if (strpos($ruleName, self::SINGLE_RULE_PREFIX) === 0)
-            {
+            } else if (strpos($ruleName, self::SINGLE_RULE_PREFIX) === 0) {
                 $this->stack->push(substr($ruleName, strlen(self::SINGLE_RULE_PREFIX)));
                 $this->callParser($matched, $matchedPosition, self::STATE_SINGLE, $tokenList);
 
-                if (!$this->stack->pop())
-                {
+                if (!$this->stack->pop()) {
                     throw new LexerException('Stack is empty after pop');
                 }
-            }
-            else if ($ruleName !== null)
-            {
+            } else if ($ruleName !== null) {
                 $this->stack->push($ruleName);
                 $this->callParser($matched, $matchedPosition, self::STATE_ENTER, $tokenList);
-            }
-            else
-            {
+            } else {
                 $this->callParser($matched, $matchedPosition, self::STATE_MATCHED, $tokenList);
             }
 
@@ -181,6 +150,24 @@ class Lexer
     }
 
     /**
+     * Add pattern to rule patterns
+     *
+     * @param string      $pattern       regex pattern
+     * @param string      $ruleName      rule name
+     * @param string|null $childRuleName child rule name
+     *
+     * @return $this
+     */
+    protected function addPattern($pattern, $ruleName, $childRuleName = null) {
+        if (!isset($this->patterns[$ruleName])) {
+            $this->patterns[$ruleName] = new LexerPattern($ruleName);
+        }
+        $this->patterns[$ruleName]->addPattern($pattern, $childRuleName);
+
+        return $this;
+    }
+
+    /**
      * Reduce input text length by patterns match
      *
      * @param string $text
@@ -188,35 +175,26 @@ class Lexer
      * @return array|bool FALSE if no valid pattern found, TRUE if input text is empty or split is not succeed,
      *                    otherwise array with unmatched, matched part of text and used patterns rule name
      */
-    protected function reduce(&$text)
-    {
-        if (!array_key_exists($this->stack->top(), $this->patterns))
-        {
+    protected function reduce(&$text) {
+        if (!array_key_exists($this->stack->top(), $this->patterns)) {
             return false;
         }
-        if ($text !== '' && ($data = $this->patterns[$this->stack->top()]->split($text)) !== false)
-        {
+        if ($text !== '' && ($data = $this->patterns[$this->stack->top()]->split($text)) !== false) {
             list($unmatched, $matched, $text, $childRuleName) = $data;
 
-            return array($unmatched, $matched, $childRuleName);
+            return [$unmatched, $matched, $childRuleName];
         }
 
         return true;
     }
 
-//    /**
-//     * @param string                  $content  matched content
-//     * @param int                     $position match position
-//     * @param string                  $state    matched state (entry, exit, single, matched, unmatched)
-//     * @param \ViKon\Parser\TokenList $tokenList
-//     */
-    protected function callParser($content, $position, $state, TokenList $tokenList)
-    {
-        if ($content === '')
-        {
-            return;
-        }
-
+    /**
+     * @param string                  $content  matched content
+     * @param int                     $position match position
+     * @param string                  $state    matched state (entry, exit, single, matched, unmatched)
+     * @param \ViKon\Parser\TokenList $tokenList
+     */
+    protected function callParser($content, $position, $state, TokenList $tokenList) {
         $ruleName = $this->stack->top();
 
         $this->parser->parseToken($ruleName, $content, $position, $state, $tokenList);

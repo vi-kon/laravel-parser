@@ -1,19 +1,24 @@
 <?php
 
 
-namespace ViKon\Parser\lexer;
+namespace ViKon\Parser\Lexer;
 
-class LexerStack
-{
+/**
+ * Class LexerStack
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\Lexer
+ */
+class LexerStack {
     /** @var mixed[] */
-    private $stack = array();
+    private $stack = [];
 
     /**
      * Create new stack with elements provided as list of arguments
      */
-    public function __construct()
-    {
-        $args        = func_get_args();
+    public function __construct() {
+        $args = func_get_args();
         $this->stack = func_num_args() === 1 && is_array($args[0])
             ? $args[0]
             : $args;
@@ -24,8 +29,7 @@ class LexerStack
      *
      * @return bool FALSE if stack is empty otherwise TRUE
      */
-    public function pop()
-    {
+    public function pop() {
         array_pop($this->stack);
 
         return !empty($this->stack);
@@ -36,8 +40,7 @@ class LexerStack
      *
      * @param mixed $value
      */
-    public function push($value)
-    {
+    public function push($value) {
         array_push($this->stack, $value);
     }
 
@@ -46,8 +49,7 @@ class LexerStack
      *
      * @return mixed
      */
-    public function top()
-    {
+    public function top() {
         return end($this->stack);
     }
 }

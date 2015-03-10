@@ -1,9 +1,15 @@
 <?php
 
 
-namespace ViKon\Parser\rule;
+namespace ViKon\Parser\Rule;
 
-class RuleException extends \Exception
-{
+/**
+ * Class RuleException
+ *
+ * @author  Kovács Vince <vincekovacs@hotmail.com>
+ *
+ * @package ViKon\Parser\Rule
+ */
+class RuleException extends \Exception {
 
 }
