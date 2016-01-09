@@ -1,6 +1,6 @@
-# Laravel 5 parser and lexer
+# Parser and lexer
 
-This is **Laravel 5** package for text parsing by custom rulesets.
+This package is for text parsing by custom rulesets.
 
 ## Table of content
 
@@ -37,4 +37,4 @@ This is **Laravel 5** package for text parsing by custom rulesets.
 
 TODO
 
-[top]: #laravel-5-parser-and-lexer
+[top]: #parser-and-lexer
